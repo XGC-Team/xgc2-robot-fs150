@@ -1,7 +1,7 @@
 schema: xgc2.product.v1
 id: xgc2-fs150
 name: XGC2 FS150 Robot
-version: 0.1.0-10
+version: 0.1.0-11
 kind: mixed
 summary: Real FS150 robot onboard profile, documentation, and runtime dependency aggregation.
 groups:
@@ -59,4 +59,4 @@ release:
     xgc2-linux-utils: verify
     xgc2-mavlink-router: verify
   apt_versions:
-    focal: 0.1.0-10
+    focal: 0.1.0-11
