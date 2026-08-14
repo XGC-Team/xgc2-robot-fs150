@@ -114,10 +114,10 @@ build_router_package() {
     "${pkg_root}${ROUTER_ETC_DIR}/config.d"
 
   install -m 0644 \
-    "${REPO_ROOT}/onboard/mavlink-router/router.conf" \
+    "${REPO_ROOT}/onboard/communication/mavlink-router/router.conf" \
     "${pkg_root}${ROUTER_ETC_DIR}/router.conf"
   install -m 0644 \
-    "${REPO_ROOT}/onboard/mavlink-router/xgc2-fs150-mavlink-router.service" \
+    "${REPO_ROOT}/onboard/communication/mavlink-router/xgc2-fs150-mavlink-router.service" \
     "${pkg_root}/lib/systemd/system/${ROUTER_PACKAGE}.service"
 
   for script in postinst prerm postrm; do

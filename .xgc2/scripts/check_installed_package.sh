@@ -6,6 +6,13 @@ test -d /opt/xgc2/robots/fs150/docs
 test -f /opt/xgc2/robots/fs150/README.md
 test -f /opt/xgc2/robots/fs150/docs/rk356x_performance_mode.md
 test -f /opt/xgc2/robots/fs150/onboard/README.md
+test -f /opt/xgc2/robots/fs150/onboard/communication/README.md
+test -f /opt/xgc2/robots/fs150/onboard/communication/mavlink-router/router.conf
+test -f /opt/xgc2/robots/fs150/onboard/sensors/README.md
+test -f /opt/xgc2/robots/fs150/onboard/sensors/src/camera_ros/package.xml
+test -f /opt/xgc2/robots/fs150/onboard/sensors/src/fs150_onboard_sensors/launch/camera.launch
+test ! -e /opt/xgc2/robots/fs150/onboard/mavlink-router
+test ! -e /opt/xgc2/robots/fs150/onboard/base
 test -f /opt/xgc2/robots/fs150/px4/README.md
 
 dpkg -s xgc2-fs150-mavlink-router >/dev/null

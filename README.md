@@ -67,11 +67,15 @@ test -f /etc/xgc2/fs150-mavlink-router/router.conf
 ## Source Layout
 
 ```text
-docs/       Vehicle-level notes and debug records.
-onboard/    Onboard-computer resources, service files, router config notes,
-            CPU/performance tuning, startup commands.
-px4/        Real PX4 firmware/parameter export notes and airframe details.
+docs/                         Vehicle-level notes and debug records.
+onboard/communication/        MAVLink router (not a ROS swarm bridge)
+onboard/sensors/              Optional MIPI / rkisp camera workspace
+px4/                          Real PX4 firmware/parameter export notes.
 ```
+
+There is no `onboard/base`. PX4 on the flight controller is the vehicle
+base; this companion computer only routes MAVLink and optionally runs the
+camera. Camera is not a boot unit.
 
 ## MAVLink Router
 

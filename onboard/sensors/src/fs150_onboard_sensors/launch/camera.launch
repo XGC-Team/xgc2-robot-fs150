@@ -1,0 +1,3 @@
+<launch>
+  <include file="$(find camera_ros)/launch/camera.launch"/>
+</launch>

@@ -1,0 +1,14 @@
+%YAML 1.2
+---
+# LIVE 2026-08-15 rk356x:
+#   /dev/video0 = stream_cif_mipi_id0
+#   /dev/video8 = rkisp_mainpath   (this is the enabled stream)
+#   /dev/video5 = rkcif_tools_id1  (disabled)
+
+camera1:
+  enable: 0
+  file_name: "/dev/video5"
+
+camera2:
+  enable: 1
+  file_name: "/dev/video8"

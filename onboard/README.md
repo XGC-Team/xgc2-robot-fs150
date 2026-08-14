@@ -1,15 +1,16 @@
-# FS150 Onboard Computer
+# FS150 onboard
 
-This directory is for resources that run on, configure, or document the FS150
-onboard computer.
+Sibling trees. There is no separate `base/` — the airframe brain is PX4
+on the flight controller, not a chassis stack on this companion computer.
 
-Expected content:
+```text
+communication/           MAVLink router (YAML + systemd)
+                         binary comes from APT xgc2-mavlink-router
 
-- startup/service files;
-- MAVLink router configuration notes;
-- CPU and operating-system tuning notes;
-- network and serial-port records;
-- reproducible shell commands used during field debugging.
+sensors/src/             optional MIPI camera workspace
+  camera_ros             V4L2 / rkisp publisher (field driver)
+  fs150_onboard_sensors  compose launch
+```
 
-Generated logs and captures should stay out of git unless a small, curated
-sample is intentionally needed for documentation.
+systemd for the router lives in `communication/mavlink-router` and is
+shipped by `xgc2-fs150-mavlink-router`. The camera is not enabled at boot.

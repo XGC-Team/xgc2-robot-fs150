@@ -1,0 +1,16 @@
+<launch>
+  <param name="cfg_name" type="str" value="$(find camera_ros)/cfg/config.yaml" />
+
+  <!-- image_transport 里面的参数只有启动代码前设置有效 -->
+  <!-- 设置压缩比 -->
+  <param name="/camera2/compressed/jpeg_quality" value="1" /> <!-- 1~100 值越大质量越高 -->
+  <param name="/camera2/compressed/png_quality" value="1" /> <!-- 0~10 值越小质量越高 -->
+  <param name="/camera2/compressed/format" value="jpeg" /> <!--jpeg 或 png -->
+
+  <param name="/camera1/compressed/jpeg_quality" value="50" /> <!-- 1~100 值越大质量越高 -->
+  <param name="/camera1/compressed/png_quality" value="1" /> <!-- 0~10 值越小质量越高 -->
+  <param name="/camera1/compressed/format" value="jpeg" /> <!--jpeg 或 png -->
+
+  <node pkg="camera_ros" type="camera_ros_node" name="camera_ros" output="screen">
+  </node>
+</launch>
