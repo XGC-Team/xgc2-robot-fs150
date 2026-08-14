@@ -16,6 +16,7 @@ test -f /opt/xgc2/robots/fs150/onboard/sensors/legacy/README.md
 test -f /opt/xgc2/robots/fs150/onboard/autostart/README.md
 test -f /opt/xgc2/robots/fs150/onboard/autostart/src/fs150_onboard_autostart/systemd/xgc2-fs150-mavlink-router.service
 test -f /opt/xgc2/robots/fs150/onboard/autostart/src/fs150_onboard_autostart/systemd/xgc2-fs150-camera.service
+test -f /opt/xgc2/robots/fs150/onboard/autostart/src/fs150_onboard_autostart/systemd/xgc2-fs150-media-edge.service
 test -x /opt/xgc2/robots/fs150/onboard/autostart/src/fs150_onboard_autostart/scripts/start-communication
 test ! -e /opt/xgc2/robots/fs150/onboard/mavlink-router
 test ! -e /opt/xgc2/robots/fs150/onboard/base

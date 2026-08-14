@@ -63,6 +63,7 @@ ownership:
   - /usr/lib/xgc2/fs150/autostart
   - /lib/systemd/system/xgc2-fs150-mavlink-router.service
   - /lib/systemd/system/xgc2-fs150-camera.service
+  - /lib/systemd/system/xgc2-fs150-media-edge.service
   - /usr/share/doc/xgc2-fs150-mavlink-router
 release:
   dependency_policy:
