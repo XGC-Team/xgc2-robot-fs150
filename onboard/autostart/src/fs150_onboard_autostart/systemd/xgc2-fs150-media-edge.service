@@ -1,0 +1,15 @@
+[Unit]
+Description=XGC2 FS150 Media Edge (WebRTC)
+After=network-online.target xgc2-fs150-camera.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+EnvironmentFile=-/etc/xgc2/fs150/onboard.env
+ExecStartPre=/bin/mkdir -p /tmp/xgc2/media /run/xgc2/media-edge
+ExecStart=/usr/lib/xgc2/fs150/autostart/start-media-edge
+Restart=on-failure
+RestartSec=3s
+
+[Install]
+WantedBy=multi-user.target

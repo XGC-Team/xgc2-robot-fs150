@@ -128,6 +128,7 @@ build_router_package() {
     "${autostart_src}/scripts/wait-device" \
     "${autostart_src}/scripts/start-communication" \
     "${autostart_src}/scripts/start-camera" \
+    "${autostart_src}/scripts/start-media-edge" \
     "${pkg_root}${autostart_lib}/"
   install -m 0644 \
     "${autostart_src}/systemd/xgc2-fs150-mavlink-router.service" \
@@ -135,6 +136,9 @@ build_router_package() {
   install -m 0644 \
     "${autostart_src}/systemd/xgc2-fs150-camera.service" \
     "${pkg_root}/lib/systemd/system/xgc2-fs150-camera.service"
+  install -m 0644 \
+    "${autostart_src}/systemd/xgc2-fs150-media-edge.service" \
+    "${pkg_root}/lib/systemd/system/xgc2-fs150-media-edge.service"
 
   for script in postinst prerm postrm; do
     install -m 0755 \
@@ -182,7 +186,8 @@ EOF
     "${pkg_root}/DEBIAN/postrm" \
     "${pkg_root}${autostart_lib}/wait-device" \
     "${pkg_root}${autostart_lib}/start-communication" \
-    "${pkg_root}${autostart_lib}/start-camera"
+    "${pkg_root}${autostart_lib}/start-camera" \
+    "${pkg_root}${autostart_lib}/start-media-edge"
 
   fakeroot dpkg-deb --build \
     "${pkg_root}" \

@@ -20,6 +20,7 @@ if [ "$1" = "configure" ] && command -v systemctl >/dev/null 2>&1; then
   systemctl enable "${SERVICE}" >/dev/null 2>&1 || true
   # Camera is install-only. Never enable or start it here.
   systemctl disable xgc2-fs150-camera.service >/dev/null 2>&1 || true
+  systemctl disable xgc2-fs150-media-edge.service >/dev/null 2>&1 || true
 
   if systemd_running; then
     systemctl restart "${SERVICE}" >/dev/null 2>&1 || true

@@ -24,6 +24,11 @@ apt:
   - ros-noetic-vrpn-client-ros
   - xgc2-utils-linux-performance-mode (>= 1.1.0-12)
   - xgc2-mavlink-router (>= 3.0.0-7+focal)
+  recommends:
+  - xgc2-media-edge
+  - gstreamer1.0-tools
+  - gstreamer1.0-plugins-good
+  - gstreamer1.0-plugins-ugly
 usage:
   install: 'sudo apt update
 
