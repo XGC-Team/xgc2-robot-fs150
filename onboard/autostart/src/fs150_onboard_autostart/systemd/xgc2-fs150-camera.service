@@ -1,0 +1,27 @@
+[Unit]
+Description=XGC2 FS150 MIPI / rkisp camera
+After=network.target xgc2-fs150-mavlink-router.service
+
+[Service]
+Type=simple
+User=marvsmart
+Group=marvsmart
+SupplementaryGroups=video
+WorkingDirectory=/home/marvsmart
+EnvironmentFile=-/etc/xgc2/fs150/onboard.env
+Environment=ROS_DISTRO=noetic
+Environment=ROS_MASTER_URI=http://127.0.0.1:11311
+Environment=ROS_IP=127.0.0.1
+Environment=HOME=/home/marvsmart
+Environment=ROS_HOME=/home/marvsmart/.ros
+Environment=CAMERA_SETTLE_SEC=5
+ExecStart=/usr/lib/xgc2/fs150/autostart/start-camera
+Restart=always
+RestartSec=5
+StartLimitIntervalSec=0
+TimeoutStartSec=120
+TimeoutStopSec=15
+KillMode=mixed
+
+[Install]
+WantedBy=multi-user.target

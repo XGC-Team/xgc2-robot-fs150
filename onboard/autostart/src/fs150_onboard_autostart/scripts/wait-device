@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+path="${1:-}"
+timeout="${2:-60}"
+if [[ -z "${path}" ]]; then
+  echo "usage: wait-device PATH [TIMEOUT_SEC]" >&2
+  exit 2
+fi
+
+deadline=$((SECONDS + timeout))
+while [[ ${SECONDS} -lt ${deadline} ]]; do
+  if [[ -e "${path}" ]]; then
+    exit 0
+  fi
+  sleep 0.2
+done
+
+echo "device did not appear: ${path}" >&2
+exit 1

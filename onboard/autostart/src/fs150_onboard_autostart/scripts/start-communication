@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+HERE="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
+UART_DEVICE="${UART_DEVICE:-/dev/ttyS7}"
+UART_WAIT_TIMEOUT="${UART_WAIT_TIMEOUT:-60}"
+ROUTER_BIN="${ROUTER_BIN:-/usr/bin/mavlink-routerd}"
+ROUTER_CONF="${ROUTER_CONF:-/etc/xgc2/fs150-mavlink-router/router.conf}"
+ROUTER_CONF_D="${ROUTER_CONF_D:-/etc/xgc2/fs150-mavlink-router/config.d}"
+
+if [[ ! -x "${ROUTER_BIN}" ]]; then
+  echo "missing mavlink-routerd: ${ROUTER_BIN}" >&2
+  exit 1
+fi
+if [[ ! -f "${ROUTER_CONF}" ]]; then
+  echo "missing router conf: ${ROUTER_CONF}" >&2
+  exit 1
+fi
+
+"${HERE}/wait-device" "${UART_DEVICE}" "${UART_WAIT_TIMEOUT}"
+mkdir -p "${ROUTER_CONF_D}"
+exec "${ROUTER_BIN}" --syslog -c "${ROUTER_CONF}" -d "${ROUTER_CONF_D}"

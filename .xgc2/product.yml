@@ -42,6 +42,8 @@ usage:
 
     test -f /etc/xgc2/fs150-mavlink-router/router.conf
 
+    test -f /lib/systemd/system/xgc2-fs150-camera.service
+
     systemctl is-enabled xgc2-fs150-mavlink-router.service
 
     '
@@ -52,7 +54,10 @@ ownership:
   - /opt/xgc2/robots/fs150
   - /usr/share/doc/xgc2-fs150
   - /etc/xgc2/fs150-mavlink-router
+  - /etc/xgc2/fs150/onboard.env
+  - /usr/lib/xgc2/fs150/autostart
   - /lib/systemd/system/xgc2-fs150-mavlink-router.service
+  - /lib/systemd/system/xgc2-fs150-camera.service
   - /usr/share/doc/xgc2-fs150-mavlink-router
 release:
   dependency_policy:

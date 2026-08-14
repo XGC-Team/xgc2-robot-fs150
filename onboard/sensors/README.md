@@ -1,7 +1,8 @@
 # FS150 sensors
 
-Optional onboard camera workspace. Sibling of `onboard/communication`.
-Not part of min-boot. Do not enable it from the router service.
+Optional onboard camera workspace. Sibling of `onboard/communication`
+and `onboard/autostart`. Not part of min-boot. The camera unit lives in
+`autostart` and is install-only.
 
 ```text
 src/camera_ros               field V4L2 driver (rkisp / MIPI)

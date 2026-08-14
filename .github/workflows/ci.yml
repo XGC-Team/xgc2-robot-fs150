@@ -31,6 +31,9 @@ jobs:
           bash -n .xgc2/debian/xgc2-fs150-mavlink-router/postinst
           bash -n .xgc2/debian/xgc2-fs150-mavlink-router/prerm
           bash -n .xgc2/debian/xgc2-fs150-mavlink-router/postrm
+          bash -n onboard/autostart/src/fs150_onboard_autostart/scripts/wait-device
+          bash -n onboard/autostart/src/fs150_onboard_autostart/scripts/start-communication
+          bash -n onboard/autostart/src/fs150_onboard_autostart/scripts/start-camera
 
   build-debs:
     runs-on: ubuntu-latest

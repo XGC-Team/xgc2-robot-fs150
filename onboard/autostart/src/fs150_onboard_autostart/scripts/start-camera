@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROS_DISTRO="${ROS_DISTRO:-noetic}"
+ROS_PREFIX="/opt/ros/${ROS_DISTRO}"
+if [[ ! -f "${ROS_PREFIX}/setup.bash" ]]; then
+  echo "missing ROS setup: ${ROS_PREFIX}/setup.bash" >&2
+  exit 1
+fi
+# shellcheck disable=SC1090
+source "${ROS_PREFIX}/setup.bash"
+
+SENSORS_DEVEL="${FS150_SENSORS_DEVEL:-/opt/xgc2/robots/fs150/onboard/sensors/devel/setup.bash}"
+if [[ -f "${SENSORS_DEVEL}" ]]; then
+  # shellcheck disable=SC1090
+  source "${SENSORS_DEVEL}"
+fi
+
+export ROS_MASTER_URI="${ROS_MASTER_URI:-http://127.0.0.1:11311}"
+export ROS_IP="${ROS_IP:-127.0.0.1}"
+
+sec="${CAMERA_SETTLE_SEC:-5}"
+echo "xgc2 fs150 camera: settle ${sec}s"
+sleep "${sec}"
+
+exec roslaunch fs150_onboard_sensors camera.launch

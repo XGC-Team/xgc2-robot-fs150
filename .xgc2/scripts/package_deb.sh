@@ -97,6 +97,7 @@ EOF
 
   find "${pkg_root}" -type d -exec chmod 0755 {} +
   find "${pkg_root}" -type f -exec chmod 0644 {} +
+  find "${pkg_root}${INSTALL_PREFIX}/onboard/autostart" -type f \( -name 'start-*' -o -name 'wait-device' \) -exec chmod 0755 {} +
   chmod 0755 "${pkg_root}/DEBIAN"
 
   fakeroot dpkg-deb --build \
@@ -106,19 +107,34 @@ EOF
 
 build_router_package() {
   local pkg_root="${BUILD_DIR}/${ROUTER_PACKAGE}"
+  local autostart_src="${REPO_ROOT}/onboard/autostart/src/fs150_onboard_autostart"
+  local autostart_lib="/usr/lib/xgc2/fs150/autostart"
 
   mkdir -p \
     "${pkg_root}/DEBIAN" \
     "${pkg_root}/lib/systemd/system" \
     "${pkg_root}/usr/share/doc/${ROUTER_PACKAGE}" \
-    "${pkg_root}${ROUTER_ETC_DIR}/config.d"
+    "${pkg_root}${ROUTER_ETC_DIR}/config.d" \
+    "${pkg_root}/etc/xgc2/fs150" \
+    "${pkg_root}${autostart_lib}"
 
   install -m 0644 \
     "${REPO_ROOT}/onboard/communication/mavlink-router/router.conf" \
     "${pkg_root}${ROUTER_ETC_DIR}/router.conf"
   install -m 0644 \
-    "${REPO_ROOT}/onboard/communication/mavlink-router/xgc2-fs150-mavlink-router.service" \
-    "${pkg_root}/lib/systemd/system/${ROUTER_PACKAGE}.service"
+    "${autostart_src}/config/onboard.env" \
+    "${pkg_root}/etc/xgc2/fs150/onboard.env"
+  install -m 0755 \
+    "${autostart_src}/scripts/wait-device" \
+    "${autostart_src}/scripts/start-communication" \
+    "${autostart_src}/scripts/start-camera" \
+    "${pkg_root}${autostart_lib}/"
+  install -m 0644 \
+    "${autostart_src}/systemd/xgc2-fs150-mavlink-router.service" \
+    "${pkg_root}/lib/systemd/system/xgc2-fs150-mavlink-router.service"
+  install -m 0644 \
+    "${autostart_src}/systemd/xgc2-fs150-camera.service" \
+    "${pkg_root}/lib/systemd/system/xgc2-fs150-camera.service"
 
   for script in postinst prerm postrm; do
     install -m 0755 \
@@ -145,14 +161,16 @@ EOF
   cat > "${pkg_root}/usr/share/doc/${ROUTER_PACKAGE}/README" <<EOF
 XGC2 FS150 MAVLink Router
 
-Installed service:
-  ${ROUTER_PACKAGE}.service
+Installed services (from onboard/autostart):
+  xgc2-fs150-mavlink-router.service   (communication, enabled)
+  xgc2-fs150-camera.service           (install-only, not enabled)
 
 Installed configuration:
   ${ROUTER_ETC_DIR}/router.conf
   ${ROUTER_ETC_DIR}/config.d
+  /etc/xgc2/fs150/onboard.env
 
-The service is enabled on install and stopped/disabled on package removal.
+Communication is enabled on install. Camera is installed only.
 It depends on xgc2-mavlink-router for /usr/bin/mavlink-routerd.
 EOF
 
@@ -161,7 +179,10 @@ EOF
   chmod 0755 "${pkg_root}/DEBIAN" \
     "${pkg_root}/DEBIAN/postinst" \
     "${pkg_root}/DEBIAN/prerm" \
-    "${pkg_root}/DEBIAN/postrm"
+    "${pkg_root}/DEBIAN/postrm" \
+    "${pkg_root}${autostart_lib}/wait-device" \
+    "${pkg_root}${autostart_lib}/start-communication" \
+    "${pkg_root}${autostart_lib}/start-camera"
 
   fakeroot dpkg-deb --build \
     "${pkg_root}" \

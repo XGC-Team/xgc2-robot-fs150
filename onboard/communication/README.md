@@ -2,11 +2,11 @@
 
 This is the MAVLink router, not a ROS swarm bridge.
 
-Sibling of `onboard/sensors`. There is no `onboard/base`.
+Sibling of `onboard/sensors` and `onboard/autostart`. There is no
+`onboard/base`. systemd lives in `autostart`, not here.
 
 ```text
 mavlink-router/router.conf
-mavlink-router/xgc2-fs150-mavlink-router.service
 ```
 
 The router binary is APT `xgc2-mavlink-router` (`/usr/bin/mavlink-routerd`).
@@ -17,5 +17,6 @@ This tree only owns the FS150 topology:
 - remote MAVROS UDP `0.0.0.0:14560` with `BlockMsgIdOut = 105, 106, 331`
 - local MAVROS UDP `127.0.0.1:14561` unfiltered
 
-Install `xgc2-fs150-mavlink-router` to enable the unit. The aggregator
-package `xgc2-fs150` does not start it.
+Install `xgc2-fs150-mavlink-router` to install and enable the
+communication unit owned by `onboard/autostart`. The aggregator package
+`xgc2-fs150` does not start it.

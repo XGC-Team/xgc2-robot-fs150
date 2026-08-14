@@ -1,0 +1,20 @@
+[Unit]
+Description=XGC2 FS150 communication (MAVLink router)
+Documentation=file:/usr/share/doc/xgc2-fs150-mavlink-router/README
+Wants=network-online.target
+After=network-online.target
+Conflicts=mavlink-router.service fs150-mavlink-router.service startMavRoute.service
+
+[Service]
+Type=simple
+EnvironmentFile=-/etc/xgc2/fs150/onboard.env
+Environment=UART_DEVICE=/dev/ttyS7
+Environment=UART_WAIT_TIMEOUT=60
+Environment=ROUTER_CONF=/etc/xgc2/fs150-mavlink-router/router.conf
+Environment=ROUTER_CONF_D=/etc/xgc2/fs150-mavlink-router/config.d
+ExecStart=/usr/lib/xgc2/fs150/autostart/start-communication
+Restart=on-failure
+RestartSec=2s
+
+[Install]
+WantedBy=multi-user.target

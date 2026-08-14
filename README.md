@@ -61,6 +61,7 @@ test -f /opt/xgc2/robots/fs150/docs/rk356x_performance_mode.md
 dpkg -s xgc2-fs150
 dpkg -s xgc2-fs150-mavlink-router
 systemctl is-enabled xgc2-fs150-mavlink-router.service
+test -f /lib/systemd/system/xgc2-fs150-camera.service
 test -f /etc/xgc2/fs150-mavlink-router/router.conf
 ```
 
@@ -68,14 +69,16 @@ test -f /etc/xgc2/fs150-mavlink-router/router.conf
 
 ```text
 docs/                         Vehicle-level notes and debug records.
-onboard/communication/        MAVLink router (not a ROS swarm bridge)
+onboard/communication/        MAVLink router topology (not a ROS swarm bridge)
 onboard/sensors/              Optional MIPI / rkisp camera workspace
+onboard/autostart/            systemd: communication + camera
 px4/                          Real PX4 firmware/parameter export notes.
 ```
 
 There is no `onboard/base`. PX4 on the flight controller is the vehicle
 base; this companion computer only routes MAVLink and optionally runs the
-camera. Camera is not a boot unit.
+camera. `autostart` enables communication for the next boot and does not
+enable the camera.
 
 ## MAVLink Router
 
