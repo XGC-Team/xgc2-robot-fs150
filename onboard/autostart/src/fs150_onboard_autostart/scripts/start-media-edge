@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Browser WebRTC. Does not open the camera.
+EDGE="${XGC_MEDIA_EDGE:-$(command -v xgc-media-edge || true)}"
+if [[ -z "${EDGE}" || ! -x "${EDGE}" ]]; then
+  echo "xgc-media-edge not installed (apt xgc2-media-edge)" >&2
+  exit 1
+fi
+ROSTER="${MEDIA_SOURCES:-/opt/xgc2/robots/fs150/onboard/sensors/src/fs150_onboard_sensors/config/media-sources.json}"
+if [[ ! -f "${ROSTER}" ]]; then
+  echo "missing media roster: ${ROSTER}" >&2
+  exit 1
+fi
+PUBLIC_IP="${MEDIA_PUBLIC_IP:-}"
+if [[ -z "${PUBLIC_IP}" ]]; then
+  PUBLIC_IP="$(ip -4 -o addr show wlan0 2>/dev/null | awk '{print $4}' | cut -d/ -f1 | head -1 || true)"
+fi
+mkdir -p /tmp/xgc2/media /run/xgc2/media-edge
+ARGS=(
+  --control-address "${MEDIA_CONTROL_ADDRESS:-0.0.0.0:18090}"
+  --sources-config "${ROSTER}"
+  --mediamtx-runtime-dir "${MEDIA_MTX_RUNTIME:-/run/xgc2/media-edge}"
+)
+if [[ -n "${PUBLIC_IP}" ]]; then
+  ARGS+=(--public-ip "${PUBLIC_IP}")
+fi
+exec "${EDGE}" "${ARGS[@]}"

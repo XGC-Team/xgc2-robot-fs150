@@ -1,26 +1,50 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROS_DISTRO="${ROS_DISTRO:-noetic}"
-ROS_PREFIX="/opt/ros/${ROS_DISTRO}"
-if [[ ! -f "${ROS_PREFIX}/setup.bash" ]]; then
-  echo "missing ROS setup: ${ROS_PREFIX}/setup.bash" >&2
+# Native V4L2 -> one H264 encode -> Media Edge. No ROS re-encode.
+HERE="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
+DEVICE="${CAMERA_DEVICE:-/dev/video8}"
+WIDTH="${CAMERA_WIDTH:-640}"
+HEIGHT="${CAMERA_HEIGHT:-480}"
+FPS="${CAMERA_FPS:-30}"
+PIXEL="${CAMERA_PIXEL_FORMAT:-nv12}"
+ENCODER="${CAMERA_ENCODER:-x264}"
+SOURCE_ID="${CAMERA_SOURCE_ID:-fs150_cam}"
+RTP_PORT="${CAMERA_RTP_PORT:-5004}"
+SOCK="${CAMERA_CONTROL_SOCKET:-/tmp/xgc2/media/fs150_cam.sock}"
+
+if [[ ! -e "${DEVICE}" ]]; then
+  echo "fs150 camera: device missing ${DEVICE} (need rkaiq_3A / rkisp_mainpath)" >&2
   exit 1
 fi
-# shellcheck disable=SC1090
-source "${ROS_PREFIX}/setup.bash"
 
-SENSORS_DEVEL="${FS150_SENSORS_DEVEL:-/opt/xgc2/robots/fs150/onboard/sensors/devel/setup.bash}"
-if [[ -f "${SENSORS_DEVEL}" ]]; then
-  # shellcheck disable=SC1090
-  source "${SENSORS_DEVEL}"
+NATIVE=""
+for c in \
+  "$(command -v xgc_native_v4l2_rtp || true)" \
+  "/opt/ros/${ROS_DISTRO:-noetic}/lib/xgc_camera_driver/xgc_native_v4l2_rtp" \
+  "/opt/xgc2/robots/fs150/onboard/sensors/src/xgc_camera_media/xgc_native_v4l2_rtp" \
+  "${HERE}/../../../sensors/src/xgc_camera_media/xgc_native_v4l2_rtp"
+do
+  if [[ -n "${c}" && -x "${c}" ]]; then
+    NATIVE="${c}"
+    break
+  fi
+done
+if [[ -z "${NATIVE}" ]]; then
+  echo "fs150 camera: xgc_native_v4l2_rtp missing" >&2
+  exit 1
 fi
 
-export ROS_MASTER_URI="${ROS_MASTER_URI:-http://127.0.0.1:11311}"
-export ROS_IP="${ROS_IP:-127.0.0.1}"
-
-sec="${CAMERA_SETTLE_SEC:-5}"
-echo "xgc2 fs150 camera: settle ${sec}s"
-sleep "${sec}"
-
-exec roslaunch fs150_onboard_sensors camera.launch
+mkdir -p "$(dirname "${SOCK}")"
+echo "xgc2 fs150 camera: native ${DEVICE} encoder=${ENCODER} -> :${RTP_PORT}"
+exec "${NATIVE}" \
+  --device "${DEVICE}" \
+  --width "${WIDTH}" \
+  --height "${HEIGHT}" \
+  --fps "${FPS}" \
+  --pixel-format "${PIXEL}" \
+  --encoder "${ENCODER}" \
+  --source-id "${SOURCE_ID}" \
+  --frame-id "${CAMERA_FRAME_ID:-fs150_cam_optical_frame}" \
+  --rtp-port "${RTP_PORT}" \
+  --control-socket "${SOCK}"

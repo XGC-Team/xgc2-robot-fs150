@@ -1,3 +1,17 @@
 <launch>
-  <include file="$(find camera_ros)/launch/camera.launch"/>
+  <!-- Native V4L2 owner -> Media Edge. Not camera_ros. Not ROS re-encode. -->
+  <arg name="device" default="/dev/video8" />
+  <arg name="width" default="640" />
+  <arg name="height" default="480" />
+  <arg name="fps" default="30" />
+  <arg name="pixel_format" default="nv12" />
+  <arg name="encoder" default="x264" />
+  <arg name="bitrate" default="2500000" />
+  <arg name="source_id" default="fs150_cam" />
+  <arg name="frame_id" default="fs150_cam_optical_frame" />
+  <arg name="rtp_port" default="5004" />
+  <arg name="control_socket" default="/tmp/xgc2/media/fs150_cam.sock" />
+  <node name="xgc_native_v4l2_rtp" pkg="fs150_onboard_sensors" type="start-native-rtp"
+        output="screen"
+        args="--device $(arg device) --width $(arg width) --height $(arg height) --fps $(arg fps) --pixel-format $(arg pixel_format) --encoder $(arg encoder) --bitrate $(arg bitrate) --source-id $(arg source_id) --frame-id $(arg frame_id) --rtp-port $(arg rtp_port) --control-socket $(arg control_socket)" />
 </launch>

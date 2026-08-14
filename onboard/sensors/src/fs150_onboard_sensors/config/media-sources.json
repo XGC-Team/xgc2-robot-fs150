@@ -1,0 +1,9 @@
+{
+  "sources": [
+    {
+      "id": "fs150_cam",
+      "rtpListenAddress": "127.0.0.1:5004",
+      "controlSocket": "/tmp/xgc2/media/fs150_cam.sock"
+    }
+  ]
+}
