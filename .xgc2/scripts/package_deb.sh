@@ -99,7 +99,6 @@ EOF
   find "${pkg_root}" -type d -exec chmod 0755 {} +
   find "${pkg_root}" -type f -exec chmod 0644 {} +
   find "${pkg_root}${INSTALL_PREFIX}/onboard/autostart" -type f \( -name 'start-*' -o -name 'wait-device' \) -exec chmod 0755 {} +
-  find "${pkg_root}${INSTALL_PREFIX}/onboard/communication" -type f -name 'vrpn_relay' -exec chmod 0755 {} +
   chmod 0755 "${pkg_root}/DEBIAN"
 
   fakeroot dpkg-deb --build \
@@ -156,12 +155,8 @@ build_router_package() {
     "${pkg_root}/usr/share/xgc2/fs150/mavros/launch/mavros.launch"
   mkdir -p "${pkg_root}/usr/share/xgc2/fs150/mocap/launch"
   install -m 0644 \
-    "${REPO_ROOT}/onboard/communication/src/fs150_mocap/launch/vrpn.launch" \
     "${REPO_ROOT}/onboard/communication/src/fs150_mocap/launch/mocap.launch" \
     "${pkg_root}/usr/share/xgc2/fs150/mocap/launch/"
-  install -m 0755 \
-    "${REPO_ROOT}/onboard/communication/src/fs150_mocap/scripts/vrpn_relay" \
-    "${pkg_root}/usr/share/xgc2/fs150/mocap/vrpn_relay"
 
   for script in postinst prerm postrm; do
     install -m 0755 \
@@ -216,8 +211,7 @@ EOF
     "${pkg_root}${autostart_lib}/start-mavros" \
     "${pkg_root}${autostart_lib}/start-mocap" \
     "${pkg_root}${autostart_lib}/start-camera" \
-    "${pkg_root}${autostart_lib}/start-media-edge" \
-    "${pkg_root}/usr/share/xgc2/fs150/mocap/vrpn_relay"
+    "${pkg_root}${autostart_lib}/start-media-edge"
 
   fakeroot dpkg-deb --build \
     "${pkg_root}" \

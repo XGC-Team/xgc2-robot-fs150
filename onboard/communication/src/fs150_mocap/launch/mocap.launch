@@ -1,23 +1,16 @@
 <launch>
-  <!-- Own tracker only. PX4 also gets vision_pose at ~30 Hz. -->
+  <!-- Assembly only. Relay logic lives in xgc2_vrpn_relay. -->
   <arg name="server" default="127.0.0.1" />
   <arg name="port" default="3883" />
   <arg name="tracker" default="FS150_01" />
   <arg name="vision_out" default="/mavros/vision_pose/pose" />
   <arg name="vision_target_hz" default="30.0" />
 
-  <include file="$(find fs150_mocap)/launch/vrpn.launch">
+  <include file="$(find xgc2_vrpn_relay)/launch/mocap.launch">
     <arg name="server" value="$(arg server)" />
     <arg name="port" value="$(arg port)" />
     <arg name="tracker" value="$(arg tracker)" />
+    <arg name="vision_out" value="$(arg vision_out)" />
+    <arg name="vision_target_hz" value="$(arg vision_target_hz)" />
   </include>
-
-  <node pkg="fs150_mocap" type="vrpn_relay" name="vrpn_relay" output="screen">
-    <param name="tracker" value="$(arg tracker)" />
-    <param name="pose_out" value="/pose" />
-    <param name="twist_out" value="/twist" />
-    <param name="accel_out" value="/accel" />
-    <param name="vision_out" value="$(arg vision_out)" />
-    <param name="vision_target_hz" value="$(arg vision_target_hz)" />
-  </node>
 </launch>

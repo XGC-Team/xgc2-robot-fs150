@@ -38,18 +38,20 @@ jobs:
           bash -n onboard/autostart/src/fs150_onboard_autostart/scripts/start-camera
           python3 - <<'PY'
           from pathlib import Path
-          import ast
           import xml.etree.ElementTree as ET
           root = Path("onboard/communication/src")
           for launch in (
               root / "fs150_mavros/launch/mavros.launch",
-              root / "fs150_mocap/launch/vrpn.launch",
               root / "fs150_mocap/launch/mocap.launch",
           ):
               ET.parse(launch)
               print("parsed", launch)
-          ast.parse((root / "fs150_mocap/scripts/vrpn_relay").read_text())
-          print("syntax ok vrpn_relay")
+          mocap = (root / "fs150_mocap/launch/mocap.launch").read_text()
+          assert "xgc2_vrpn_relay" in mocap
+          assert "FS150_01" in mocap
+          assert not (root / "fs150_mocap/scripts/vrpn_relay").exists()
+          assert not (root / "fs150_mocap/launch/vrpn.launch").exists()
+          print("fs150 mocap is assembly-only")
           PY
 
   build-debs:

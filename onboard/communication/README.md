@@ -8,7 +8,7 @@ Sibling of `onboard/sensors` and `onboard/autostart`. There is no
 ```text
 mavlink-router/router.conf
 src/fs150_mavros/launch/mavros.launch
-src/fs150_mocap/launch/{vrpn,mocap}.launch
+src/fs150_mocap/launch/mocap.launch      assembly: tracker + vision_pose
 ```
 
 The router binary is APT `xgc2-mavlink-router` (`/usr/bin/mavlink-routerd`).
@@ -35,11 +35,10 @@ roslaunch fs150_mavros mavros.launch
 sudo systemctl start xgc2-fs150-mavros.service
 ```
 
-Each aircraft also runs its own VRPN client (`fs150_mocap`) against
-**one** Motive tracker (`FS150_01` by default). The relay copies
-pose/twist/accel to `/pose` `/twist` `/accel` and, because this is PX4,
-also to `/mavros/vision_pose/pose` at about 30 Hz (drop immediately when
-faster; never hold when slower).
+Each aircraft also runs its own VRPN client against **one** Motive
+tracker (`FS150_01` by default). `fs150_mocap` only names that tracker
+and turns vision_pose on. The client, quality gate, and 30 Hz drop
+policy live in APT `xgc2-vrpn-relay` (`xgc2_vrpn_relay`).
 
 ```bash
 sudo systemctl start xgc2-fs150-mocap.service
