@@ -76,13 +76,13 @@ Section: metapackages
 Priority: optional
 Architecture: all
 Maintainer: XGC2 <apt@example.com>
-Depends: chrony, python3, ros-noetic-ros-base, ros-noetic-mavros, ros-noetic-mavros-extras, ros-noetic-vrpn-client-ros, xgc2-utils-linux-performance-mode (>= 1.1.0-12), xgc2-mavlink-router (>= 3.0.0-7+focal)
+Depends: chrony, python3, ros-noetic-ros-base, ros-noetic-mavros, ros-noetic-mavros-extras, ros-noetic-vrpn-client-ros, xgc2-mavlink-router (>= 3.0.0-7+focal)
 Recommends: htop, i2c-tools, iproute2, net-tools, python3-pip, socat, tmux, usbutils
 Description: XGC2 FS150 real-vehicle profile
  Real FS150 robot/onboard aggregation package for XGC2.
  It installs FS150 vehicle resources under /opt/xgc2/robots/fs150 and pulls
- the ROS Noetic, MAVROS, VRPN, MAVLink router, and Linux utility dependencies
- expected on the FS150 onboard computer.
+ the ROS Noetic, MAVROS, VRPN, and MAVLink router dependencies expected on
+ the FS150 onboard computer. It does not pull Linux host-utils.
 EOF
 
   cat > "${pkg_root}/usr/share/doc/${PROFILE_PACKAGE}/README" <<EOF
@@ -92,7 +92,8 @@ Installed resources:
   ${INSTALL_PREFIX}
 
 This package does not enable or start flight-runtime services automatically.
-Install ${ROUTER_PACKAGE} to enable the FS150 MAVLink router service.
+Install ${ROUTER_PACKAGE} to install the FS150 MAVLink router unit. Enable
+it yourself if this aircraft should start the router on boot.
 EOF
 
   find "${pkg_root}" -type d -exec chmod 0755 {} +
@@ -153,28 +154,30 @@ Section: misc
 Priority: optional
 Architecture: all
 Maintainer: XGC2 <apt@example.com>
-Depends: xgc2-mavlink-router (>= 3.0.0-7+focal), systemd
+Depends: xgc2-mavlink-router (>= 3.0.0-7+focal)
 Recommends: xgc2-fs150
 Description: XGC2 FS150 MAVLink router service
- FS150-specific MAVLink router configuration and systemd service.
+ FS150-specific MAVLink router configuration and systemd units.
  It uses /usr/bin/mavlink-routerd from xgc2-mavlink-router, listens on
  TCP 5760, routes the fixed /dev/ttyS7 flight-controller UART at 921600 baud,
  and exposes filtered remote MAVROS plus unfiltered local MAVROS UDP ports.
+ Units are install-only; nothing is enabled or started on install.
 EOF
 
   cat > "${pkg_root}/usr/share/doc/${ROUTER_PACKAGE}/README" <<EOF
 XGC2 FS150 MAVLink Router
 
 Installed services (from onboard/autostart):
-  xgc2-fs150-mavlink-router.service   (communication, enabled)
-  xgc2-fs150-camera.service           (install-only, not enabled)
+  xgc2-fs150-mavlink-router.service   (communication, install-only)
+  xgc2-fs150-camera.service           (install-only)
+  xgc2-fs150-media-edge.service       (install-only)
 
 Installed configuration:
   ${ROUTER_ETC_DIR}/router.conf
   ${ROUTER_ETC_DIR}/config.d
   /etc/xgc2/fs150/onboard.env
 
-Communication is enabled on install. Camera is installed only.
+No unit is enabled or started on install.
 It depends on xgc2-mavlink-router for /usr/bin/mavlink-routerd.
 EOF
 

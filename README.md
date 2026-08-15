@@ -27,21 +27,22 @@ platform and should follow the aircraft across deployments.
 
 The `xgc2-fs150` package is a real-vehicle aggregation package.  It installs the FS150
 resources under `/opt/xgc2/robots/fs150` and depends on the ROS Noetic,
-MAVROS, VRPN, MAVLink router, and XGC2 Linux utility packages expected on the
-onboard computer.
+MAVROS, VRPN, and MAVLink router packages expected on the onboard computer.
+It does not depend on XGC2 Linux host-utils.
 
 The `xgc2-fs150-mavlink-router` package is the opt-in flight-runtime router
-service.  It depends on the XGC2-published `xgc2-mavlink-router` binary
-package, installs `/etc/xgc2/fs150-mavlink-router/router.conf`, and enables
-`xgc2-fs150-mavlink-router.service` on install.
+unit.  It depends on the XGC2-published `xgc2-mavlink-router` binary
+package and installs `/etc/xgc2/fs150-mavlink-router/router.conf` plus the
+systemd units.  It does not enable or start any unit.
 
 `pymavlink` is useful for low-level MAVLink debugging, but it is not available
 as a standard Ubuntu Focal/ROS Noetic APT package in the checked repositories.
 Install it separately for debug sessions if needed.
 
 The `xgc2-fs150` package itself does not install, enable, or start FS150
-flight-runtime systemd services.  Install `xgc2-fs150-mavlink-router` when the
-machine should claim `/dev/ttyS7` and run the MAVLink router at boot.
+flight-runtime systemd services.  Install `xgc2-fs150-mavlink-router` to
+place the units on disk, then enable them yourself if this aircraft should
+claim `/dev/ttyS7` at boot.
 
 ## Install
 
@@ -60,7 +61,7 @@ test -d /opt/xgc2/robots/fs150/docs
 test -f /opt/xgc2/robots/fs150/docs/rk356x_performance_mode.md
 dpkg -s xgc2-fs150
 dpkg -s xgc2-fs150-mavlink-router
-systemctl is-enabled xgc2-fs150-mavlink-router.service
+! systemctl is-enabled xgc2-fs150-mavlink-router.service
 test -f /lib/systemd/system/xgc2-fs150-camera.service
 test -f /etc/xgc2/fs150-mavlink-router/router.conf
 ```
@@ -77,8 +78,8 @@ px4/                          Real PX4 firmware/parameter export notes.
 
 There is no `onboard/base`. PX4 on the flight controller is the vehicle
 base; this companion computer only routes MAVLink and optionally runs the
-camera. `autostart` enables communication for the next boot and does not
-enable the camera.
+camera. `autostart` only installs the units. It does not enable
+communication, camera, or Media Edge.
 
 ## MAVLink Router
 

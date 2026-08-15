@@ -12,8 +12,8 @@ sensors/src/             optional MIPI camera workspace
   fs150_onboard_sensors  compose launch
 
 autostart/src/           fs150_onboard_autostart
-                         communication + camera systemd (install only
-                         except communication is boot-enabled)
+                         communication + camera + Media Edge systemd
+                         (install only; no unit is boot-enabled)
 ```
 
 Functional trees do not ship systemd. Units live in `autostart`.

@@ -14,5 +14,5 @@ src/fs150_onboard_autostart
   scripts/wait-device
 ```
 
-The router package enables communication only. Camera and Media Edge are
-installed, never enabled, never started.
+The router package installs the units only. Communication, camera, and
+Media Edge are never enabled and never started by the package.

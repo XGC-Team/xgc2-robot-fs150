@@ -17,6 +17,6 @@ This tree only owns the FS150 topology:
 - remote MAVROS UDP `0.0.0.0:14560` with `BlockMsgIdOut = 105, 106, 331`
 - local MAVROS UDP `127.0.0.1:14561` unfiltered
 
-Install `xgc2-fs150-mavlink-router` to install and enable the
-communication unit owned by `onboard/autostart`. The aggregator package
-`xgc2-fs150` does not start it.
+Install `xgc2-fs150-mavlink-router` to install the communication unit
+owned by `onboard/autostart`. The package does not enable or start it.
+The aggregator package `xgc2-fs150` also does not start it.

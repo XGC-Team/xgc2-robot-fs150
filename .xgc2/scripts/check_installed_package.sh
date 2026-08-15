@@ -35,11 +35,16 @@ grep -q '^Baud = 921600$' /etc/xgc2/fs150-mavlink-router/router.conf
 grep -q '^BlockMsgIdOut = 105, 106, 331$' /etc/xgc2/fs150-mavlink-router/router.conf
 
 if command -v systemctl >/dev/null 2>&1; then
-  systemctl is-enabled xgc2-fs150-mavlink-router.service >/dev/null
-  if systemctl is-enabled xgc2-fs150-camera.service >/dev/null 2>&1; then
-    echo "camera unit must not be enabled" >&2
-    exit 1
-  fi
+  for unit in \
+    xgc2-fs150-mavlink-router.service \
+    xgc2-fs150-camera.service \
+    xgc2-fs150-media-edge.service
+  do
+    if systemctl is-enabled "${unit}" >/dev/null 2>&1; then
+      echo "${unit} must not be enabled on install" >&2
+      exit 1
+    fi
+  done
 fi
 
 echo "Installed FS150 robot package check passed"
