@@ -33,7 +33,15 @@ jobs:
           bash -n .xgc2/debian/xgc2-fs150-mavlink-router/postrm
           bash -n onboard/autostart/src/fs150_onboard_autostart/scripts/wait-device
           bash -n onboard/autostart/src/fs150_onboard_autostart/scripts/start-communication
+          bash -n onboard/autostart/src/fs150_onboard_autostart/scripts/start-mavros
           bash -n onboard/autostart/src/fs150_onboard_autostart/scripts/start-camera
+          python3 - <<'PY'
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+          launch = Path("onboard/communication/src/fs150_mavros/launch/mavros.launch")
+          ET.parse(launch)
+          print("parsed", launch)
+          PY
 
   build-debs:
     runs-on: ubuntu-latest

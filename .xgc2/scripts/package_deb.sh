@@ -128,6 +128,7 @@ build_router_package() {
   install -m 0755 \
     "${autostart_src}/scripts/wait-device" \
     "${autostart_src}/scripts/start-communication" \
+    "${autostart_src}/scripts/start-mavros" \
     "${autostart_src}/scripts/start-camera" \
     "${autostart_src}/scripts/start-media-edge" \
     "${pkg_root}${autostart_lib}/"
@@ -140,6 +141,14 @@ build_router_package() {
   install -m 0644 \
     "${autostart_src}/systemd/xgc2-fs150-media-edge.service" \
     "${pkg_root}/lib/systemd/system/xgc2-fs150-media-edge.service"
+  install -m 0644 \
+    "${autostart_src}/systemd/xgc2-fs150-mavros.service" \
+    "${pkg_root}/lib/systemd/system/xgc2-fs150-mavros.service"
+
+  mkdir -p "${pkg_root}/usr/share/xgc2/fs150/mavros/launch"
+  install -m 0644 \
+    "${REPO_ROOT}/onboard/communication/src/fs150_mavros/launch/mavros.launch" \
+    "${pkg_root}/usr/share/xgc2/fs150/mavros/launch/mavros.launch"
 
   for script in postinst prerm postrm; do
     install -m 0755 \
@@ -169,6 +178,7 @@ XGC2 FS150 MAVLink Router
 
 Installed services (from onboard/autostart):
   xgc2-fs150-mavlink-router.service   (communication, install-only)
+  xgc2-fs150-mavros.service           (install-only)
   xgc2-fs150-camera.service           (install-only)
   xgc2-fs150-media-edge.service       (install-only)
 
@@ -189,6 +199,7 @@ EOF
     "${pkg_root}/DEBIAN/postrm" \
     "${pkg_root}${autostart_lib}/wait-device" \
     "${pkg_root}${autostart_lib}/start-communication" \
+    "${pkg_root}${autostart_lib}/start-mavros" \
     "${pkg_root}${autostart_lib}/start-camera" \
     "${pkg_root}${autostart_lib}/start-media-edge"
 

@@ -15,9 +15,9 @@ if [ "$1" = "configure" ] && command -v systemctl >/dev/null 2>&1; then
     systemctl disable "${old_service}" >/dev/null 2>&1 || true
   done
 
-  # Install units only. Never enable or start communication, camera, or
-  # Media Edge. An operator enables them later if the aircraft should boot
-  # with those services.
+  # Install units only. Never enable or start communication, MAVROS,
+  # camera, or Media Edge.
+  systemctl disable xgc2-fs150-mavros.service >/dev/null 2>&1 || true
   systemctl disable xgc2-fs150-camera.service >/dev/null 2>&1 || true
   systemctl disable xgc2-fs150-media-edge.service >/dev/null 2>&1 || true
 fi

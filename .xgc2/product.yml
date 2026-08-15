@@ -1,7 +1,7 @@
 schema: xgc2.product.v1
 id: xgc2-fs150
 name: XGC2 FS150 Robot
-version: 0.1.0-12
+version: 0.1.0-13
 kind: mixed
 summary: Real FS150 robot onboard profile, documentation, and runtime dependency aggregation.
 groups:
@@ -51,7 +51,11 @@ usage:
 
     test -f /lib/systemd/system/xgc2-fs150-camera.service
 
+    test -f /lib/systemd/system/xgc2-fs150-mavros.service
+
     ! systemctl is-enabled xgc2-fs150-mavlink-router.service
+
+    ! systemctl is-enabled xgc2-fs150-mavros.service
 
     '
   notes: The ROS Noetic and XGC2 APT sources must be configured before installing
@@ -64,11 +68,13 @@ ownership:
   - /etc/xgc2/fs150/onboard.env
   - /usr/lib/xgc2/fs150/autostart
   - /lib/systemd/system/xgc2-fs150-mavlink-router.service
+  - /lib/systemd/system/xgc2-fs150-mavros.service
   - /lib/systemd/system/xgc2-fs150-camera.service
   - /lib/systemd/system/xgc2-fs150-media-edge.service
+  - /usr/share/xgc2/fs150/mavros
   - /usr/share/doc/xgc2-fs150-mavlink-router
 release:
   dependency_policy:
     xgc2-mavlink-router: verify
   apt_versions:
-    focal: 0.1.0-12
+    focal: 0.1.0-13

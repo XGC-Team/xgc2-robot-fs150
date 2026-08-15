@@ -90,6 +90,8 @@ The FS150 service package installs this static router topology:
 - UART `/dev/ttyS7` at `921600` baud for the PX4 flight controller.
 - Remote MAVROS UDP server on `0.0.0.0:14560` with `BlockMsgIdOut = 105, 106, 331`.
 - Local MAVROS UDP server on `127.0.0.1:14561` without message filtering.
+  Onboard `fs150_mavros` / `xgc2-fs150-mavros.service` connects here
+  (`udp://:14551@127.0.0.1:14561`). The unit is install-only.
 
 The message block is applied only on the remote UDP endpoint output path, so
 local MAVROS can still receive high-rate IMU data from message `105`.

@@ -1,0 +1,24 @@
+[Unit]
+Description=XGC2 FS150 onboard MAVROS
+Documentation=file:/usr/share/doc/xgc2-fs150-mavlink-router/README
+Wants=network-online.target xgc2-fs150-mavlink-router.service
+After=network-online.target xgc2-fs150-mavlink-router.service
+
+[Service]
+Type=simple
+User=marvsmart
+Group=marvsmart
+WorkingDirectory=/home/marvsmart
+EnvironmentFile=-/etc/xgc2/fs150/onboard.env
+Environment=ROS_DISTRO=noetic
+Environment=ROS_MASTER_URI=http://127.0.0.1:11311
+Environment=ROS_IP=127.0.0.1
+Environment=HOME=/home/marvsmart
+Environment=ROS_HOME=/home/marvsmart/.ros
+Environment=FCU_URL=udp://:14551@127.0.0.1:14561
+ExecStart=/usr/lib/xgc2/fs150/autostart/start-mavros
+Restart=on-failure
+RestartSec=3s
+
+[Install]
+WantedBy=multi-user.target

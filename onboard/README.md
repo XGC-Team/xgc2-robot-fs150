@@ -5,6 +5,7 @@ on the flight controller, not a chassis stack on this companion computer.
 
 ```text
 communication/           MAVLink router topology (router.conf)
+                         + fs150_mavros launch (127.0.0.1:14561)
                          binary comes from APT xgc2-mavlink-router
 
 sensors/src/             optional MIPI camera workspace
@@ -12,8 +13,8 @@ sensors/src/             optional MIPI camera workspace
   fs150_onboard_sensors  compose launch
 
 autostart/src/           fs150_onboard_autostart
-                         communication + camera + Media Edge systemd
-                         (install only; no unit is boot-enabled)
+                         communication + MAVROS + camera + Media Edge
+                         systemd (install only; no unit is boot-enabled)
 ```
 
 Functional trees do not ship systemd. Units live in `autostart`.

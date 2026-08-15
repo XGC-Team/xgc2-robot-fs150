@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROS_DISTRO="${ROS_DISTRO:-noetic}"
+ROS_PREFIX="/opt/ros/${ROS_DISTRO}"
+if [[ -f "${ROS_PREFIX}/setup.bash" ]]; then
+  # shellcheck disable=SC1090
+  set +u
+  source "${ROS_PREFIX}/setup.bash"
+  set -u
+fi
+
+export ROS_MASTER_URI="${ROS_MASTER_URI:-http://127.0.0.1:11311}"
+export ROS_IP="${ROS_IP:-127.0.0.1}"
+
+HERE="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
+LAUNCH="${MAVROS_LAUNCH:-}"
+if [[ -z "${LAUNCH}" ]]; then
+  for candidate in \
+    /usr/share/xgc2/fs150/mavros/launch/mavros.launch \
+    /opt/xgc2/robots/fs150/onboard/communication/src/fs150_mavros/launch/mavros.launch \
+    "${HERE}/../../../communication/src/fs150_mavros/launch/mavros.launch"
+  do
+    if [[ -f "${candidate}" ]]; then
+      LAUNCH="${candidate}"
+      break
+    fi
+  done
+fi
+if [[ -z "${LAUNCH}" ]]; then
+  echo "fs150 mavros: launch file missing" >&2
+  exit 1
+fi
+
+FCU_URL="${FCU_URL:-udp://:14551@127.0.0.1:14561}"
+TGT_SYSTEM="${MAV_SYS_ID:-1}"
+TGT_COMPONENT="${MAV_COMP_ID:-1}"
+
+echo "xgc2 fs150 mavros: ${FCU_URL} sys=${TGT_SYSTEM} via ${LAUNCH}"
+exec roslaunch "${LAUNCH}" \
+  fcu_url:="${FCU_URL}" \
+  tgt_system:="${TGT_SYSTEM}" \
+  tgt_component:="${TGT_COMPONENT}"
