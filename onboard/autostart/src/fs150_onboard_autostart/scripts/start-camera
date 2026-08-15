@@ -2,7 +2,6 @@
 set -euo pipefail
 
 # Native V4L2 -> one H264 encode -> Media Edge. No ROS re-encode.
-HERE="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
 DEVICE="${CAMERA_DEVICE:-/dev/video8}"
 WIDTH="${CAMERA_WIDTH:-640}"
 HEIGHT="${CAMERA_HEIGHT:-480}"
@@ -21,9 +20,7 @@ fi
 NATIVE=""
 for c in \
   "$(command -v xgc_native_v4l2_rtp || true)" \
-  "/opt/ros/${ROS_DISTRO:-noetic}/lib/xgc2_camera_driver/xgc_native_v4l2_rtp" \
-  "/opt/xgc2/robots/fs150/onboard/sensors/src/xgc_camera_media/xgc_native_v4l2_rtp" \
-  "${HERE}/../../../sensors/src/xgc_camera_media/xgc_native_v4l2_rtp"
+  "/opt/ros/${ROS_DISTRO:-noetic}/lib/xgc2_camera_driver/xgc_native_v4l2_rtp"
 do
   if [[ -n "${c}" && -x "${c}" ]]; then
     NATIVE="${c}"
@@ -31,7 +28,7 @@ do
   fi
 done
 if [[ -z "${NATIVE}" ]]; then
-  echo "fs150 camera: xgc_native_v4l2_rtp missing" >&2
+  echo "fs150 camera: xgc_native_v4l2_rtp missing; install ros-noetic-xgc2-camera-driver" >&2
   exit 1
 fi
 

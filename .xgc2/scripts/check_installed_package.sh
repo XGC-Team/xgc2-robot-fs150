@@ -10,8 +10,9 @@ test -f /opt/xgc2/robots/fs150/onboard/communication/README.md
 test -f /opt/xgc2/robots/fs150/onboard/communication/mavlink-router/router.conf
 test ! -e /opt/xgc2/robots/fs150/onboard/communication/mavlink-router/xgc2-fs150-mavlink-router.service
 test -f /opt/xgc2/robots/fs150/onboard/sensors/README.md
-test -f /opt/xgc2/robots/fs150/onboard/sensors/src/xgc_camera_media/xgc_native_v4l2_rtp
+test ! -e /opt/xgc2/robots/fs150/onboard/sensors/src/xgc_camera_media
 test -f /opt/xgc2/robots/fs150/onboard/sensors/src/fs150_onboard_sensors/launch/camera.launch
+grep -q 'xgc2_camera_driver' /opt/xgc2/robots/fs150/onboard/sensors/src/fs150_onboard_sensors/launch/camera.launch
 test -f /opt/xgc2/robots/fs150/onboard/sensors/legacy/README.md
 test -f /opt/xgc2/robots/fs150/onboard/autostart/README.md
 test -f /opt/xgc2/robots/fs150/onboard/autostart/src/fs150_onboard_autostart/systemd/xgc2-fs150-mavlink-router.service

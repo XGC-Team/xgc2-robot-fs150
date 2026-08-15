@@ -9,9 +9,9 @@ communication/           MAVLink router topology (router.conf)
                          + fs150_mocap (tracker + vision_pose assembly)
                          binary comes from APT xgc2-mavlink-router
 
-sensors/src/             optional MIPI camera workspace
-  camera_ros             V4L2 / rkisp publisher (field driver)
-  fs150_onboard_sensors  compose launch
+sensors/src/             optional MIPI camera assembly
+  fs150_onboard_sensors  compose launch + media-sources.json
+                         (capture is shared xgc2_camera_driver)
 
 autostart/src/           fs150_onboard_autostart
                          communication + MAVROS + camera + Media Edge

@@ -1,7 +1,7 @@
 schema: xgc2.product.v1
 id: xgc2-fs150
 name: XGC2 FS150 Robot
-version: 0.1.0-15
+version: 0.1.0-16
 kind: mixed
 summary: Real FS150 robot onboard profile, documentation, and runtime dependency aggregation.
 groups:
@@ -23,7 +23,6 @@ apt:
   - ros-noetic-mavros-extras
   - ros-noetic-vrpn-client-ros
   - xgc2-mavlink-router (>= 3.0.0-7+focal)
-  - xgc2-utils-linux-timezone
   recommends:
   - xgc2-media-edge
   - gstreamer1.0-tools
@@ -31,8 +30,6 @@ apt:
   - gstreamer1.0-plugins-ugly
 usage:
   install: 'sudo apt update
-
-    sudo apt install xgc2-utils-linux-timezone
 
     sudo apt install xgc2-fs150
 
@@ -83,4 +80,4 @@ release:
     xgc2-linux-utils: verify
     xgc2-media-edge: verify
   apt_versions:
-    focal: 0.1.0-15
+    focal: 0.1.0-16

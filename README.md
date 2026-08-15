@@ -50,7 +50,6 @@ Configure both the ROS Noetic APT source and the XGC2 APT source first.  Then:
 
 ```bash
 sudo apt update
-sudo apt install xgc2-utils-linux-timezone
 sudo apt install xgc2-fs150
 sudo apt install xgc2-fs150-mavlink-router
 ```
