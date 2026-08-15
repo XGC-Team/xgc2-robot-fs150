@@ -29,16 +29,6 @@ on:
         required: false
         default: ""
         type: string
-      run_cpp_quality:
-        description: Run C++ quality checks
-        required: true
-        default: false
-        type: boolean
-      run_source_tests:
-        description: Run source tests
-        required: true
-        default: false
-        type: boolean
 
 defaults:
   run:
@@ -75,12 +65,33 @@ jobs:
             echo "apt_overlay_url requires a dependency_set_digest" >&2
             exit 1
           fi
-
   release-guard:
     needs: prepare-contract
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+  cpp-quality:
+    name: cpp-quality
+    needs: release-guard
+    runs-on: ubuntu-latest
+    steps:
+      - name: No standalone C++ quality gate configured
+        run: echo "No standalone C++ quality gate is configured for xgc2-robot-fs150."
+  source-tests:
+    name: source-tests
+    needs: release-guard
+    runs-on: ubuntu-latest
+    steps:
+      - name: No standalone source tests configured
+        run: echo "No standalone source tests are configured for xgc2-robot-fs150."
+  build:
+    name: debs-all
+    needs: release-guard
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+
 
       - name: Validate release inputs
         env:
@@ -99,30 +110,8 @@ jobs:
             exit 1
           fi
 
-  cpp-quality:
-    if: ${{ inputs.run_cpp_quality }}
-    name: cpp-quality
-    needs: release-guard
-    runs-on: ubuntu-latest
-    steps:
-      - name: No standalone C++ quality gate configured
-        run: echo "No standalone C++ quality gate is configured for xgc2-robot-fs150."
 
-  source-tests:
-    if: ${{ inputs.run_source_tests }}
-    name: source-tests
-    needs: release-guard
-    runs-on: ubuntu-latest
-    steps:
-      - name: No standalone source tests configured
-        run: echo "No standalone source tests are configured for xgc2-robot-fs150."
 
-  build:
-    name: debs-all
-    needs: release-guard
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
 
       - name: Build and install-check deb packages
         run: |
