@@ -80,5 +80,7 @@ ownership:
 release:
   dependency_policy:
     xgc2-mavlink-router: verify
+    xgc2-linux-utils: verify
+    xgc2-media-edge: verify
   apt_versions:
     focal: 0.1.0-14
