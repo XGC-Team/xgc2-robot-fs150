@@ -23,6 +23,7 @@ apt:
   - ros-noetic-mavros-extras
   - ros-noetic-vrpn-client-ros
   - xgc2-mavlink-router (>= 3.0.0-7+focal)
+  - xgc2-utils-linux-timezone
   recommends:
   - xgc2-media-edge
   - gstreamer1.0-tools
@@ -30,6 +31,8 @@ apt:
   - gstreamer1.0-plugins-ugly
 usage:
   install: 'sudo apt update
+
+    sudo apt install xgc2-utils-linux-timezone
 
     sudo apt install xgc2-fs150
 
