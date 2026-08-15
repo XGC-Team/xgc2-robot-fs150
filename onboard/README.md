@@ -6,6 +6,7 @@ on the flight controller, not a chassis stack on this companion computer.
 ```text
 communication/           MAVLink router topology (router.conf)
                          + fs150_mavros launch (127.0.0.1:14561)
+                         + fs150_mocap (own VRPN tracker + relay)
                          binary comes from APT xgc2-mavlink-router
 
 sensors/src/             optional MIPI camera workspace

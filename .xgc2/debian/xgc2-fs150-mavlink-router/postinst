@@ -18,6 +18,7 @@ if [ "$1" = "configure" ] && command -v systemctl >/dev/null 2>&1; then
   # Install units only. Never enable or start communication, MAVROS,
   # camera, or Media Edge.
   systemctl disable xgc2-fs150-mavros.service >/dev/null 2>&1 || true
+  systemctl disable xgc2-fs150-mocap.service >/dev/null 2>&1 || true
   systemctl disable xgc2-fs150-camera.service >/dev/null 2>&1 || true
   systemctl disable xgc2-fs150-media-edge.service >/dev/null 2>&1 || true
 fi

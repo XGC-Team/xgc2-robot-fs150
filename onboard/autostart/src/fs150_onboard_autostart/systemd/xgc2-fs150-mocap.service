@@ -1,0 +1,25 @@
+[Unit]
+Description=XGC2 FS150 VRPN client and vision_pose relay
+Wants=network-online.target xgc2-fs150-mavros.service
+After=network-online.target xgc2-fs150-mavros.service
+
+[Service]
+Type=simple
+User=marvsmart
+Group=marvsmart
+WorkingDirectory=/home/marvsmart
+EnvironmentFile=-/etc/xgc2/fs150/onboard.env
+Environment=ROS_DISTRO=noetic
+Environment=ROS_MASTER_URI=http://127.0.0.1:11311
+Environment=ROS_IP=127.0.0.1
+Environment=HOME=/home/marvsmart
+Environment=ROS_HOME=/home/marvsmart/.ros
+Environment=MOCAP_RIGID_BODY=FS150_01
+Environment=VISION_OUT=/mavros/vision_pose/pose
+Environment=VISION_TARGET_HZ=30.0
+ExecStart=/usr/lib/xgc2/fs150/autostart/start-mocap
+Restart=on-failure
+RestartSec=3s
+
+[Install]
+WantedBy=multi-user.target

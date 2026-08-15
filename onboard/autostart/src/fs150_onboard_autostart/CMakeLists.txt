@@ -8,6 +8,7 @@ install(PROGRAMS
   scripts/wait-device
   scripts/start-communication
   scripts/start-mavros
+  scripts/start-mocap
   scripts/start-camera
   scripts/start-media-edge
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

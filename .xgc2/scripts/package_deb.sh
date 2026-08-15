@@ -129,6 +129,7 @@ build_router_package() {
     "${autostart_src}/scripts/wait-device" \
     "${autostart_src}/scripts/start-communication" \
     "${autostart_src}/scripts/start-mavros" \
+    "${autostart_src}/scripts/start-mocap" \
     "${autostart_src}/scripts/start-camera" \
     "${autostart_src}/scripts/start-media-edge" \
     "${pkg_root}${autostart_lib}/"
@@ -144,11 +145,22 @@ build_router_package() {
   install -m 0644 \
     "${autostart_src}/systemd/xgc2-fs150-mavros.service" \
     "${pkg_root}/lib/systemd/system/xgc2-fs150-mavros.service"
+  install -m 0644 \
+    "${autostart_src}/systemd/xgc2-fs150-mocap.service" \
+    "${pkg_root}/lib/systemd/system/xgc2-fs150-mocap.service"
 
   mkdir -p "${pkg_root}/usr/share/xgc2/fs150/mavros/launch"
   install -m 0644 \
     "${REPO_ROOT}/onboard/communication/src/fs150_mavros/launch/mavros.launch" \
     "${pkg_root}/usr/share/xgc2/fs150/mavros/launch/mavros.launch"
+  mkdir -p "${pkg_root}/usr/share/xgc2/fs150/mocap/launch"
+  install -m 0644 \
+    "${REPO_ROOT}/onboard/communication/src/fs150_mocap/launch/vrpn.launch" \
+    "${REPO_ROOT}/onboard/communication/src/fs150_mocap/launch/mocap.launch" \
+    "${pkg_root}/usr/share/xgc2/fs150/mocap/launch/"
+  install -m 0755 \
+    "${REPO_ROOT}/onboard/communication/src/fs150_mocap/scripts/vrpn_relay" \
+    "${pkg_root}/usr/share/xgc2/fs150/mocap/vrpn_relay"
 
   for script in postinst prerm postrm; do
     install -m 0755 \
@@ -179,6 +191,7 @@ XGC2 FS150 MAVLink Router
 Installed services (from onboard/autostart):
   xgc2-fs150-mavlink-router.service   (communication, install-only)
   xgc2-fs150-mavros.service           (install-only)
+  xgc2-fs150-mocap.service            (install-only)
   xgc2-fs150-camera.service           (install-only)
   xgc2-fs150-media-edge.service       (install-only)
 
@@ -200,8 +213,10 @@ EOF
     "${pkg_root}${autostart_lib}/wait-device" \
     "${pkg_root}${autostart_lib}/start-communication" \
     "${pkg_root}${autostart_lib}/start-mavros" \
+    "${pkg_root}${autostart_lib}/start-mocap" \
     "${pkg_root}${autostart_lib}/start-camera" \
-    "${pkg_root}${autostart_lib}/start-media-edge"
+    "${pkg_root}${autostart_lib}/start-media-edge" \
+    "${pkg_root}/usr/share/xgc2/fs150/mocap/vrpn_relay"
 
   fakeroot dpkg-deb --build \
     "${pkg_root}" \

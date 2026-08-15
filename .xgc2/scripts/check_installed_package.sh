@@ -18,9 +18,13 @@ test -f /opt/xgc2/robots/fs150/onboard/autostart/src/fs150_onboard_autostart/sys
 test -f /opt/xgc2/robots/fs150/onboard/autostart/src/fs150_onboard_autostart/systemd/xgc2-fs150-camera.service
 test -f /opt/xgc2/robots/fs150/onboard/autostart/src/fs150_onboard_autostart/systemd/xgc2-fs150-media-edge.service
 test -f /opt/xgc2/robots/fs150/onboard/autostart/src/fs150_onboard_autostart/systemd/xgc2-fs150-mavros.service
+test -f /opt/xgc2/robots/fs150/onboard/autostart/src/fs150_onboard_autostart/systemd/xgc2-fs150-mocap.service
 test -f /opt/xgc2/robots/fs150/onboard/communication/src/fs150_mavros/launch/mavros.launch
+test -f /opt/xgc2/robots/fs150/onboard/communication/src/fs150_mocap/launch/mocap.launch
+test -x /opt/xgc2/robots/fs150/onboard/communication/src/fs150_mocap/scripts/vrpn_relay
 test -x /opt/xgc2/robots/fs150/onboard/autostart/src/fs150_onboard_autostart/scripts/start-communication
 test -x /opt/xgc2/robots/fs150/onboard/autostart/src/fs150_onboard_autostart/scripts/start-mavros
+test -x /opt/xgc2/robots/fs150/onboard/autostart/src/fs150_onboard_autostart/scripts/start-mocap
 test ! -e /opt/xgc2/robots/fs150/onboard/mavlink-router
 test ! -e /opt/xgc2/robots/fs150/onboard/base
 test -f /opt/xgc2/robots/fs150/px4/README.md
@@ -31,12 +35,16 @@ test -d /etc/xgc2/fs150-mavlink-router/config.d
 test -f /etc/xgc2/fs150/onboard.env
 test -x /usr/lib/xgc2/fs150/autostart/start-communication
 test -x /usr/lib/xgc2/fs150/autostart/start-mavros
+test -x /usr/lib/xgc2/fs150/autostart/start-mocap
 test -x /usr/lib/xgc2/fs150/autostart/start-camera
 test -f /lib/systemd/system/xgc2-fs150-mavlink-router.service
 test -f /lib/systemd/system/xgc2-fs150-mavros.service
+test -f /lib/systemd/system/xgc2-fs150-mocap.service
 test -f /lib/systemd/system/xgc2-fs150-camera.service
 test -f /usr/share/xgc2/fs150/mavros/launch/mavros.launch
+test -f /usr/share/xgc2/fs150/mocap/launch/mocap.launch
 grep -q '127.0.0.1:14561' /usr/share/xgc2/fs150/mavros/launch/mavros.launch
+grep -q 'FS150_01' /usr/share/xgc2/fs150/mocap/launch/vrpn.launch
 grep -q '^Device = /dev/ttyS7$' /etc/xgc2/fs150-mavlink-router/router.conf
 grep -q '^Baud = 921600$' /etc/xgc2/fs150-mavlink-router/router.conf
 grep -q '^BlockMsgIdOut = 105, 106, 331$' /etc/xgc2/fs150-mavlink-router/router.conf
@@ -45,6 +53,7 @@ if command -v systemctl >/dev/null 2>&1; then
   for unit in \
     xgc2-fs150-mavlink-router.service \
     xgc2-fs150-mavros.service \
+    xgc2-fs150-mocap.service \
     xgc2-fs150-camera.service \
     xgc2-fs150-media-edge.service
   do

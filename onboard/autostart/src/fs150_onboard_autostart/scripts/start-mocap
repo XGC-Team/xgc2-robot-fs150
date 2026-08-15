@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROS_DISTRO="${ROS_DISTRO:-noetic}"
+ROS_PREFIX="/opt/ros/${ROS_DISTRO}"
+if [[ -f "${ROS_PREFIX}/setup.bash" ]]; then
+  # shellcheck disable=SC1090
+  set +u
+  source "${ROS_PREFIX}/setup.bash"
+  set -u
+fi
+
+export ROS_MASTER_URI="${ROS_MASTER_URI:-http://127.0.0.1:11311}"
+export ROS_IP="${ROS_IP:-127.0.0.1}"
+
+HERE="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
+SRC_ROOT=""
+for candidate in \
+  /opt/xgc2/robots/fs150/onboard/communication/src \
+  "${HERE}/../../../communication/src"
+do
+  if [[ -d "${candidate}/fs150_mocap" ]]; then
+    SRC_ROOT="${candidate}"
+    break
+  fi
+done
+if [[ -n "${SRC_ROOT}" ]]; then
+  export ROS_PACKAGE_PATH="${SRC_ROOT}${ROS_PACKAGE_PATH:+:${ROS_PACKAGE_PATH}}"
+fi
+
+LAUNCH="${MOCAP_LAUNCH:-}"
+if [[ -z "${LAUNCH}" ]]; then
+  for candidate in \
+    /usr/share/xgc2/fs150/mocap/launch/mocap.launch \
+    /opt/xgc2/robots/fs150/onboard/communication/src/fs150_mocap/launch/mocap.launch \
+    "${HERE}/../../../communication/src/fs150_mocap/launch/mocap.launch"
+  do
+    if [[ -f "${candidate}" ]]; then
+      LAUNCH="${candidate}"
+      break
+    fi
+  done
+fi
+if [[ -z "${LAUNCH}" ]]; then
+  echo "fs150 mocap: launch file missing" >&2
+  exit 1
+fi
+
+SERVER="${VRPN_SERVER:-127.0.0.1}"
+PORT="${VRPN_PORT:-3883}"
+TRACKER="${MOCAP_RIGID_BODY:-FS150_01}"
+VISION="${VISION_OUT:-/mavros/vision_pose/pose}"
+HZ="${VISION_TARGET_HZ:-30.0}"
+
+echo "xgc2 fs150 mocap: ${TRACKER}@${SERVER}:${PORT} vision=${VISION}"
+exec roslaunch "${LAUNCH}" \
+  server:="${SERVER}" \
+  port:="${PORT}" \
+  tracker:="${TRACKER}" \
+  vision_out:="${VISION}" \
+  vision_target_hz:="${HZ}"
