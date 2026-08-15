@@ -1,0 +1,24 @@
+<launch>
+  <!-- PX4 indoor: own VRPN tracker + vision_pose relay.
+       Scout-class vehicles should launch vrpn.launch only. -->
+  <arg name="server" default="127.0.0.1" />
+  <arg name="port" default="3883" />
+  <arg name="tracker" default="FS150_01" />
+  <arg name="fcu_ns" default="" />
+  <arg name="max_hz" default="50.0" />
+  <arg name="stride" default="2" />
+
+  <include file="$(find fs150_mocap)/launch/vrpn.launch">
+    <arg name="server" value="$(arg server)" />
+    <arg name="port" value="$(arg port)" />
+    <arg name="tracker" value="$(arg tracker)" />
+  </include>
+
+  <node pkg="fs150_mocap" type="vision_pose_forward" name="vision_pose_forward"
+        output="screen">
+    <param name="input" value="/vrpn_client_node/$(arg tracker)/pose" />
+    <param name="output" value="$(arg fcu_ns)/mavros/vision_pose/pose" />
+    <param name="max_hz" value="$(arg max_hz)" />
+    <param name="stride" value="$(arg stride)" />
+  </node>
+</launch>

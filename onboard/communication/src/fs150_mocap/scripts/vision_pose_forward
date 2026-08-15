@@ -1,0 +1,95 @@
+#!/usr/bin/env python3
+"""Relay one VRPN pose stream to MAVROS vision_pose.
+
+PX4 path only. Quality gate, then uniform drop (stride), then an
+immediate min-period cap. No transform, no interpolation, no last-sample
+repeat. Scout vehicles should not run this node.
+"""
+from __future__ import print_function
+
+import math
+import sys
+
+import rospy
+from geometry_msgs.msg import PoseStamped
+
+
+def _finite(value):
+    return math.isfinite(value)
+
+
+def quality_ok(msg, reject_origin, max_abs_xy, max_jump_m, last_accepted):
+    p = msg.pose.position
+    q = msg.pose.orientation
+    if not all(_finite(v) for v in (p.x, p.y, p.z, q.x, q.y, q.z, q.w)):
+        return False, "nonfinite"
+    norm = math.sqrt(q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w)
+    if not _finite(norm) or norm < 1e-6:
+        return False, "bad_quat"
+    if reject_origin and p.x == 0.0 and p.y == 0.0:
+        return False, "origin"
+    if max_abs_xy > 0.0 and (abs(p.x) > max_abs_xy or abs(p.y) > max_abs_xy):
+        return False, "abs_xy"
+    if last_accepted is not None and max_jump_m > 0.0:
+        dx = p.x - last_accepted.pose.position.x
+        dy = p.y - last_accepted.pose.position.y
+        dz = p.z - last_accepted.pose.position.z
+        if math.sqrt(dx * dx + dy * dy + dz * dz) > max_jump_m:
+            return False, "jump"
+    msg.pose.orientation.x = q.x / norm
+    msg.pose.orientation.y = q.y / norm
+    msg.pose.orientation.z = q.z / norm
+    msg.pose.orientation.w = q.w / norm
+    return True, ""
+
+
+def main():
+    rospy.init_node("vision_pose_forward")
+    input_topic = rospy.get_param("~input", "/vrpn_client_node/FS150_01/pose")
+    output_topic = rospy.get_param("~output", "/mavros/vision_pose/pose")
+    max_hz = float(rospy.get_param("~max_hz", 50.0))
+    stride = int(rospy.get_param("~stride", 2))
+    reject_origin = bool(rospy.get_param("~reject_origin", True))
+    max_abs_xy = float(rospy.get_param("~max_abs_xy", 900.0))
+    max_jump_m = float(rospy.get_param("~max_jump_m", 2.0))
+    if stride < 1:
+        rospy.logfatal("stride must be >= 1")
+        sys.exit(2)
+    min_period = 0.0 if max_hz <= 0.0 else 1.0 / max_hz
+
+    pub = rospy.Publisher(output_topic, PoseStamped, queue_size=1)
+    state = {"seq": 0, "last_pub": None, "last_ok": None}
+
+    def on_pose(msg):
+        ok, reason = quality_ok(
+            msg, reject_origin, max_abs_xy, max_jump_m, state["last_ok"]
+        )
+        if not ok:
+            rospy.logwarn_throttle(2.0, "drop vision pose: %s", reason)
+            return
+        state["last_ok"] = msg
+        state["seq"] += 1
+        if state["seq"] % stride != 0:
+            return
+        now = rospy.Time.now()
+        last = state["last_pub"]
+        if last is not None and min_period > 0.0:
+            dt = (now - last).to_sec()
+            if dt >= 0.0 and dt < min_period:
+                return
+        state["last_pub"] = now
+        pub.publish(msg)
+
+    rospy.Subscriber(input_topic, PoseStamped, on_pose, queue_size=1)
+    rospy.loginfo(
+        "vision_pose_forward %s -> %s stride=%d max_hz=%.1f",
+        input_topic,
+        output_topic,
+        stride,
+        max_hz,
+    )
+    rospy.spin()
+
+
+if __name__ == "__main__":
+    main()
