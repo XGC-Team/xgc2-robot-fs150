@@ -99,6 +99,7 @@ EOF
   find "${pkg_root}" -type d -exec chmod 0755 {} +
   find "${pkg_root}" -type f -exec chmod 0644 {} +
   find "${pkg_root}${INSTALL_PREFIX}/onboard/autostart" -type f \( -name 'start-*' -o -name 'wait-device' \) -exec chmod 0755 {} +
+  find "${pkg_root}${INSTALL_PREFIX}/onboard/communication" -type f -name 'vrpn_relay' -exec chmod 0755 {} +
   chmod 0755 "${pkg_root}/DEBIAN"
 
   fakeroot dpkg-deb --build \
