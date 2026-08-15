@@ -3,7 +3,7 @@ set -euo pipefail
 HERE="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
 CANDIDATES=(
   "$(command -v xgc_native_v4l2_rtp || true)"
-  "/opt/ros/${ROS_DISTRO:-noetic}/lib/xgc_camera_driver/xgc_native_v4l2_rtp"
+  "/opt/ros/${ROS_DISTRO:-noetic}/lib/xgc2_camera_driver/xgc_native_v4l2_rtp"
   "${HERE}/../../xgc_camera_media/xgc_native_v4l2_rtp"
 )
 for c in "${CANDIDATES[@]}"; do
@@ -11,5 +11,5 @@ for c in "${CANDIDATES[@]}"; do
     exec "${c}" "$@"
   fi
 done
-echo "xgc_native_v4l2_rtp not found; install ros-noetic-xgc-camera-driver or ship onboard/sensors/src/xgc_camera_media" >&2
+echo "xgc_native_v4l2_rtp not found; install ros-noetic-xgc2-camera-driver or ship onboard/sensors/src/xgc_camera_media" >&2
 exit 1

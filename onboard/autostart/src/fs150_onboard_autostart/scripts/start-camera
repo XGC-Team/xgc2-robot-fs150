@@ -21,7 +21,7 @@ fi
 NATIVE=""
 for c in \
   "$(command -v xgc_native_v4l2_rtp || true)" \
-  "/opt/ros/${ROS_DISTRO:-noetic}/lib/xgc_camera_driver/xgc_native_v4l2_rtp" \
+  "/opt/ros/${ROS_DISTRO:-noetic}/lib/xgc2_camera_driver/xgc_native_v4l2_rtp" \
   "/opt/xgc2/robots/fs150/onboard/sensors/src/xgc_camera_media/xgc_native_v4l2_rtp" \
   "${HERE}/../../../sensors/src/xgc_camera_media/xgc_native_v4l2_rtp"
 do
