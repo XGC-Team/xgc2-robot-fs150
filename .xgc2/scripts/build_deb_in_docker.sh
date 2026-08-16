@@ -4,7 +4,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 
-DOCKER_IMAGE="${DOCKER_IMAGE:-ubuntu:20.04}"
+DOCKER_IMAGE="${DOCKER_IMAGE:-ghcr.io/xgc-team/xgc2-images/xgc2-build-focal-full-noetic:1.0.0}"
 DOCKER_RUN_ARGS="${DOCKER_RUN_ARGS:-}"
 WORK_DIR="${WORK_DIR:-${REPO_ROOT}/.work/docker}"
 OUTPUT_DIR="${OUTPUT_DIR:-${REPO_ROOT}/debs}"
@@ -53,16 +53,6 @@ docker run --rm \
     set -euo pipefail
 
     export DEBIAN_FRONTEND=noninteractive
-    apt-get update
-    apt-get install -y --no-install-recommends \
-      ca-certificates \
-      curl \
-      dpkg-dev \
-      fakeroot \
-      file \
-      gnupg \
-      rsync
-
     /workspace/fs150/.xgc2/scripts/package_deb.sh \
       --output-dir /workspace/out
 
