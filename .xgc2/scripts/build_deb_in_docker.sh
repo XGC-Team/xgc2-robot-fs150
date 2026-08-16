@@ -62,11 +62,6 @@ docker run --rm \
 
       install -d -m 0755 /etc/apt/keyrings
 
-      curl -fsSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key \
-        -o /etc/apt/keyrings/ros-archive-keyring.gpg
-      echo "deb [signed-by=/etc/apt/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros/ubuntu focal main" \
-        > /etc/apt/sources.list.d/ros-noetic.list
-
       curl -fsSL https://xgc2.apt.xiaokang.ink/xgc2-archive-keyring.gpg \
         -o /etc/apt/keyrings/xgc2-archive-keyring.gpg
       if [[ -n "${XGC2_APT_OVERLAY_URL:-}" ]]; then
