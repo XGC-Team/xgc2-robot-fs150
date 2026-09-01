@@ -44,6 +44,30 @@ flight-runtime systemd services.  Install `xgc2-fs150-mavlink-router` to
 place the units on disk, then enable them yourself if this aircraft should
 claim `/dev/ttyS7` at boot.
 
+For a one-shot companion bring-up (Aliyun ubuntu-ports + ROS key repair +
+XGC2 apt + quarantine foreign/broken apt lists + install router + stop/mask
+legacy mavlink units + free `/dev/ttyS7` + enable router + HEARTBEAT gate +
+Wi-Fi/static IPv4 **last**, never reconnect), run on the aircraft:
+
+```bash
+sudo bash onboard/scripts/install-mavlink-router.sh --yes \
+  --lan-address 192.168.51.24
+```
+
+Field SSID/PSK are defaulted. Omit `--lan-address` on a TTY and the script
+prompts only for this aircraft's IPv4. Default gateway/DNS is `192.168.51.1`
+(`/24`; **`/32` is refused** — it is the known “powered on but SSH hangs
+until someone pings” bug). Same-host prefix fixes are applied live without
+`connection up`. `--skip-wifi` leaves addressing alone.
+
+The script **fails** if no FC MAVLink appears on `127.0.0.1:14561` after the
+companion is at **921600** (usual cause: PX4 still on 115200). Fix PX4 via QGC
+wired serial, then re-run or restart the unit. Use `--skip-link-check` only when
+you intentionally install before the FC baud is updated.
+
+Packaged UART baud is **921600** (hard rule). Do not lower it for a quick
+heartbeat. See `docs/mavlink_timesync_rtt.md`.
+
 ## Install
 
 Configure both the ROS Noetic APT source and the XGC2 APT source first.  Then:

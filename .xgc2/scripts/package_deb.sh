@@ -117,7 +117,9 @@ build_router_package() {
     "${pkg_root}/usr/share/doc/${ROUTER_PACKAGE}" \
     "${pkg_root}${ROUTER_ETC_DIR}/config.d" \
     "${pkg_root}/etc/xgc2/fs150" \
-    "${pkg_root}${autostart_lib}"
+    "${pkg_root}${autostart_lib}" \
+    "${pkg_root}/usr/lib/xgc2/fs150" \
+    "${pkg_root}/usr/share/xgc2/fs150"
 
   install -m 0644 \
     "${REPO_ROOT}/onboard/communication/mavlink-router/router.conf" \

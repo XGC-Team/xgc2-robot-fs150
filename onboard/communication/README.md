@@ -7,17 +7,26 @@ Sibling of `onboard/sensors` and `onboard/autostart`. There is no
 
 ```text
 mavlink-router/router.conf
+expected-px4-params.json                 snapshot of DEFAULT_EXPECTED (not packaged)
 src/fs150_mavros/launch/mavros.launch
 src/fs150_mocap/launch/mocap.launch      assembly: tracker + vision_pose
 ```
+
+Onboard checker (no MAVROS): `onboard/scripts/check-px4-params.py` against
+router UDP `127.0.0.1:14561`. The expected table is builtin
+(`DEFAULT_EXPECTED`: TELEM1/921600, EKF2 vision, arm without GPS,
+kill/land disarm, 3S). The operator path is the XGC2 User script
+`FS150 · check PX4 params` (full file embedded; no companion copy).
+Optional `--expected` JSON overrides the builtin table.
 
 The router binary is APT `xgc2-mavlink-router` (`/usr/bin/mavlink-routerd`).
 This tree only owns the FS150 topology:
 
 - TCP `5760` for QGC
 - UART `/dev/ttyS7` at `921600` to PX4
-- remote MAVROS UDP `0.0.0.0:14560` with `BlockMsgIdOut = 105, 106, 331`
-- local MAVROS UDP `127.0.0.1:14561` unfiltered
+- remote / GCS UDP `0.0.0.0:14560` with `BlockMsgIdOut = 105, 106, 331`
+- loopback UDP `127.0.0.1:14561` unfiltered — onboard MAVROS and local
+  probes only (param checker). Do not aim ground tools at 14561.
 
 Onboard MAVROS is `fs150_mavros`. It only passes arguments to official
 `mavros/px4.launch` and talks to the local router port:

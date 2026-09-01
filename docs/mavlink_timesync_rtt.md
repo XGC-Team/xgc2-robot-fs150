@@ -186,8 +186,24 @@ and the return path.
 An observed `30 ms` RTT warning does not mean the warning threshold is 30 ms.
 The default threshold is 10 ms; 30 ms is the measured sample value.
 
-For FS150 high-rate MAVROS/IMU tests, keep the flight-controller UART at
-`921600` baud unless there is a specific reason to test a lower rate. If testing
-`115200`, reduce or filter high-rate streams such as `HIGHRES_IMU` message
-`105`, optical flow `106`, and odometry `331` to avoid serial queue buildup.
+## Hard rule: 921600
+
+FS150 companion ↔ PX4 UART **must** stay at `921600`. This is not optional.
+
+At `115200`, high-rate MAVLink streams queue on the serial link. That raises
+companion↔FC RTT, can block or jitter other MAVLink traffic, and has produced
+TIMESYNC RTT samples **above 30 ms** in the field (default MAVROS warning
+threshold is ~10 ms; 30 ms was a measured sample, not the threshold).
+
+Do **not** lower packaged `Baud = 921600` in
+`/etc/xgc2/fs150-mavlink-router/router.conf` to “get a heartbeat faster.”
+If `xgc2-fs150-mavlink-router` is up at 921600 but QGC/MAVROS see no HEARTBEAT,
+check and set the matching PX4 serial baud (typically `SER_TELx_BAUD` for the
+wired TELEM/UART used on that airframe) via QGC **wired serial**, then retest
+UDP `14560` / TCP `5760`. Stop conflicting legacy units
+(`startMavRoute`, `fs150-mavlink-router`) so they do not hold `/dev/ttyS7`.
+
+Low-baud experiments remain debug-only. If you must temporarily test `115200`,
+reduce or filter high-rate streams such as `HIGHRES_IMU` (`105`), optical flow
+(`106`), and odometry (`331`); never ship that as the product default.
 

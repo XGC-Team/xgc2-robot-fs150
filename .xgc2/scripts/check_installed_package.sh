@@ -41,6 +41,9 @@ test -x /usr/lib/xgc2/fs150/autostart/start-communication
 test -x /usr/lib/xgc2/fs150/autostart/start-mavros
 test -x /usr/lib/xgc2/fs150/autostart/start-mocap
 test -x /usr/lib/xgc2/fs150/autostart/start-camera
+test ! -e /usr/lib/xgc2/fs150/check-px4-params.py
+test ! -e /usr/lib/xgc2/fs150/check-px4-params.sh
+test ! -e /usr/share/xgc2/fs150/expected-px4-params.json
 test -f /lib/systemd/system/xgc2-fs150-mavlink-router.service
 test -f /lib/systemd/system/xgc2-fs150-mavros.service
 test -f /lib/systemd/system/xgc2-fs150-mocap.service
