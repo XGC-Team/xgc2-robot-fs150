@@ -66,7 +66,8 @@ wired serial, then re-run or restart the unit. Use `--skip-link-check` only when
 you intentionally install before the FC baud is updated.
 
 Packaged UART baud is **921600** (hard rule). Do not lower it for a quick
-heartbeat. See `docs/mavlink_timesync_rtt.md`.
+heartbeat. See `docs/mavlink_timesync_rtt.md`. Field RTT/TIMESYNC notes live
+in `xgc2-dev-memory` `memory/now/fs150-uart-921600.md`.
 
 ## Install
 
@@ -93,7 +94,7 @@ test -f /etc/xgc2/fs150-mavlink-router/router.conf
 ## Source Layout
 
 ```text
-docs/                         Vehicle-level notes and debug records.
+docs/                         Onboard operator notes (present tense)
 onboard/communication/        MAVLink router topology (not a ROS swarm bridge)
 onboard/sensors/              Optional MIPI / rkisp camera workspace
 onboard/autostart/            systemd: communication + camera
@@ -119,24 +120,23 @@ The FS150 service package installs this static router topology:
 The message block is applied only on the remote UDP endpoint output path, so
 local MAVROS can still receive high-rate IMU data from message `105`.
 
-## Current Notes
+## Operator notes
 
-- RK356x/RK3566 onboard-computer CPU governor modes and performance-mode
-  commands are documented in
-  [docs/rk356x_performance_mode.md](docs/rk356x_performance_mode.md).
-- Flight-controller UART routing and MAVROS/PX4 `TIMESYNC` RTT warning behavior
-  are documented in
-  [docs/mavlink_timesync_rtt.md](docs/mavlink_timesync_rtt.md).
+- CPU governor for high-rate tests: [docs/rk356x_performance_mode.md](docs/rk356x_performance_mode.md)
+- UART 921600 / TIMESYNC: [docs/mavlink_timesync_rtt.md](docs/mavlink_timesync_rtt.md)
+
+Field debug belongs in `xgc2-dev-memory` (`memory/field/fs150/`).
 
 ## Repository Boundary
 
 This repository owns:
 
-- real FS150 onboard-computer runtime notes and configuration references;
-- real PX4 parameter/firmware export notes;
-- real-vehicle port, sensor, and field-test records;
-- the `xgc2-fs150` real-vehicle aggregation Debian package.
-- the `xgc2-fs150-mavlink-router` service Debian package.
+- real FS150 onboard-computer configuration;
+- PX4 parameter/firmware export notes;
+- the `xgc2-fs150` and `xgc2-fs150-mavlink-router` Debian packages.
+
+Field debug and survey notes are not this repository; they live in
+`xgc2-dev-memory` `memory/field/fs150/`.
 
 This repository does not own:
 
