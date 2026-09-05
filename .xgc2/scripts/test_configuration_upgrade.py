@@ -55,7 +55,8 @@ class ConfigurationUpgradeTest(unittest.TestCase):
         self.work = Path(tempfile.mkdtemp(dir=self.base))
         self.root = self.work / "root"
         database = self.root / "var/lib/dpkg"
-        database.mkdir(parents=True)
+        for directory in ("updates", "info", "triggers"):
+            (database / directory).mkdir(parents=True)
         (database / "status").write_text("")
 
     def package(self, version, contents, *, legacy=False):
