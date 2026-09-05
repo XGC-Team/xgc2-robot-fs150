@@ -67,6 +67,9 @@ jobs:
             --work-dir "$RUNNER_TEMP/xgc2-fs150-all" \
             --output-dir "$GITHUB_WORKSPACE/debs"
 
+      - name: Test configuration metadata and isolated upgrades
+        run: python3 .xgc2/scripts/test_configuration_upgrade.py debs/xgc2-fs150-mavlink-router_*_all.deb
+
       - name: Create trusted build manifest
         run: |
           for architecture in amd64 arm64; do

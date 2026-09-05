@@ -160,6 +160,11 @@ build_router_package() {
     "${REPO_ROOT}/onboard/communication/src/fs150_mocap/launch/mocap.launch" \
     "${pkg_root}/usr/share/xgc2/fs150/mocap/launch/"
 
+  # dpkg-deb does not infer conffiles merely from an /etc install path.
+  install -m 0644 \
+    "${REPO_ROOT}/.xgc2/debian/${ROUTER_PACKAGE}/conffiles" \
+    "${pkg_root}/DEBIAN/conffiles"
+
   for script in postinst prerm postrm; do
     install -m 0755 \
       "${REPO_ROOT}/.xgc2/debian/${ROUTER_PACKAGE}/${script}" \
