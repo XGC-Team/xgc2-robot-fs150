@@ -112,10 +112,11 @@ The FS150 service package installs this static router topology:
 
 - TCP server on `5760` for QGC active connections.
 - UART `/dev/ttyS7` at `921600` baud for the PX4 flight controller.
-- Remote MAVROS UDP server on `0.0.0.0:14560` with `BlockMsgIdOut = 105, 106, 331`.
+- Remote MAVROS UDP server on `0.0.0.0:14560` with `BlockMsgIdOut = 105, 106, 331, 132, 30`.
 - Local MAVROS UDP server on `127.0.0.1:14561` without message filtering.
   Onboard `fs150_mavros` / `xgc2-fs150-mavros.service` connects here
-  (`udp://:14551@127.0.0.1:14561`). The unit is install-only.
+  (`udp://:14551@127.0.0.1:14561`). Enabling the router also starts
+  `xgc2-fs150-mavlink-rates.service`, which keeps msgid 31/32 at 15 Hz.
 
 The message block is applied only on the remote UDP endpoint output path, so
 local MAVROS can still receive high-rate IMU data from message `105`.

@@ -41,6 +41,7 @@ jobs:
           bash -n onboard/autostart/src/fs150_onboard_autostart/scripts/start-mavros
           bash -n onboard/autostart/src/fs150_onboard_autostart/scripts/start-mocap
           bash -n onboard/autostart/src/fs150_onboard_autostart/scripts/start-camera
+          python3 onboard/autostart/src/fs150_onboard_autostart/scripts/set-mavlink-rates --self-test
           python3 - <<'PY'
           from pathlib import Path
           import xml.etree.ElementTree as ET

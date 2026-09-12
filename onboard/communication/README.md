@@ -24,9 +24,9 @@ This tree only owns the FS150 topology:
 
 - TCP `5760` for QGC
 - UART `/dev/ttyS7` at `921600` to PX4
-- remote / GCS UDP `0.0.0.0:14560` with `BlockMsgIdOut = 105, 106, 331`
-- loopback UDP `127.0.0.1:14561` unfiltered — onboard MAVROS and local
-  probes only (param checker). Do not aim ground tools at 14561.
+- remote / GCS UDP `0.0.0.0:14560` with `BlockMsgIdOut = 105, 106, 331, 132, 30`
+- loopback UDP `127.0.0.1:14561` unfiltered — onboard MAVROS, local
+  probes, and the 31/32 keep-rate helper. Do not aim ground tools at 14561.
 
 Onboard MAVROS is `fs150_mavros`. It only passes arguments to official
 `mavros/px4.launch` and talks to the local router port:

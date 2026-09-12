@@ -1,0 +1,16 @@
+[Unit]
+Description=XGC2 FS150 MAVLink keep rates (31/32 at 15 Hz)
+Documentation=file:/usr/share/doc/xgc2-fs150-mavlink-router/README
+After=xgc2-fs150-mavlink-router.service
+PartOf=xgc2-fs150-mavlink-router.service
+
+[Service]
+Type=simple
+EnvironmentFile=-/etc/xgc2/fs150/onboard.env
+Environment=RATES_ENDPOINT=127.0.0.1:14561
+ExecStart=/usr/lib/xgc2/fs150/autostart/set-mavlink-rates
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=xgc2-fs150-mavlink-router.service

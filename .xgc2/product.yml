@@ -1,7 +1,7 @@
 schema: xgc2.product.v1
 id: xgc2-fs150
 name: XGC2 FS150 Robot
-version: 0.1.0-19
+version: 0.1.0-20
 kind: mixed
 summary: Real FS150 robot onboard profile, documentation, and runtime dependency aggregation.
 groups:
@@ -48,9 +48,13 @@ usage:
 
     test -f /lib/systemd/system/xgc2-fs150-camera.service
 
+    test -f /lib/systemd/system/xgc2-fs150-mavlink-rates.service
+
     test -f /lib/systemd/system/xgc2-fs150-mavros.service
 
     ! systemctl is-enabled xgc2-fs150-mavlink-router.service
+
+    ! systemctl is-enabled xgc2-fs150-mavlink-rates.service
 
     ! systemctl is-enabled xgc2-fs150-mavros.service
 
@@ -67,6 +71,7 @@ ownership:
   - /etc/xgc2/fs150/onboard.env
   - /usr/lib/xgc2/fs150/autostart
   - /lib/systemd/system/xgc2-fs150-mavlink-router.service
+  - /lib/systemd/system/xgc2-fs150-mavlink-rates.service
   - /lib/systemd/system/xgc2-fs150-mavros.service
   - /lib/systemd/system/xgc2-fs150-mocap.service
   - /lib/systemd/system/xgc2-fs150-camera.service
@@ -79,4 +84,4 @@ release:
     xgc2-mavlink-router: verify
     xgc2-media-edge: verify
   apt_versions:
-    focal: 0.1.0-19
+    focal: 0.1.0-20

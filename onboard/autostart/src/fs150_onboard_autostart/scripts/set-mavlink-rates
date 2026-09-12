@@ -1,0 +1,196 @@
+#!/usr/bin/env python3
+"""Keep ATTITUDE_QUATERNION (31) and LOCAL_POSITION_NED (32) at 15 Hz.
+
+Talks only to the unfiltered onboard router port (127.0.0.1:14561).
+Never opens remote 14560. Never sends interval 0 (this FC treats 0 as stop).
+
+Re-applies forever so a flight-controller reboot does not restore 30 Hz.
+"""
+from __future__ import print_function
+
+import argparse
+import os
+import socket
+import struct
+import sys
+import time
+
+CRC_EXTRA = {
+    0: 50,  # HEARTBEAT
+    76: 152,  # COMMAND_LONG
+}
+CMD_SET_MESSAGE_INTERVAL = 511
+KEEP_HZ = {
+    31: 15.0,  # ATTITUDE_QUATERNION -> /mavros/imu/data
+    32: 15.0,  # LOCAL_POSITION_NED
+}
+
+
+def crc_x25(data):
+    crc = 0xFFFF
+    for b in bytearray(data):
+        tmp = b ^ (crc & 0xFF)
+        tmp = (tmp ^ ((tmp << 4) & 0xFF)) & 0xFF
+        crc = ((crc >> 8) ^ (tmp << 8) ^ (tmp << 3) ^ (tmp >> 4)) & 0xFFFF
+    return crc
+
+
+def pack_v1(msgid, payload, seq, sysid=255, compid=190):
+    extra = CRC_EXTRA[msgid]
+    header = struct.pack("BBBBB", len(payload), seq & 0xFF, sysid, compid, msgid)
+    crc = crc_x25(header + payload + bytes(bytearray([extra])))
+    return b"\xfe" + header + payload + struct.pack("<H", crc)
+
+
+def heartbeat_pkt(seq):
+    payload = struct.pack("<IBBBBB", 0, 6, 8, 0, 0, 0)
+    return pack_v1(0, payload, seq)
+
+
+def command_long_pkt(seq, target_sys, target_comp, command, param1=0, param2=0):
+    payload = struct.pack(
+        "<fffffffHBBB",
+        float(param1),
+        float(param2),
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        int(command),
+        target_sys,
+        target_comp,
+        0,
+    )
+    return pack_v1(76, payload, seq)
+
+
+def parse_one(buf):
+    if not buf:
+        return None
+    if buf[0] == 0xFE and len(buf) >= 8:
+        plen = buf[1]
+        if len(buf) < 8 + plen:
+            return None
+        return buf[5], buf[6 : 6 + plen], buf[3]
+    if buf[0] == 0xFD and len(buf) >= 12:
+        plen = buf[1]
+        if len(buf) < 12 + plen:
+            return None
+        msgid = buf[7] | (buf[8] << 8) | (buf[9] << 16)
+        return msgid, buf[10 : 10 + plen], buf[5]
+    return None
+
+
+def hz_to_interval_us(hz):
+    if hz <= 0:
+        raise ValueError("refuse interval for Hz=%s; 0 stops this FC stream" % hz)
+    return 1.0e6 / float(hz)
+
+
+def self_test():
+    pkt = heartbeat_pkt(1)
+    parsed = parse_one(pkt)
+    assert parsed is not None and parsed[0] == 0
+    interval = hz_to_interval_us(15.0)
+    assert abs(interval - (1.0e6 / 15.0)) < 1e-6
+    try:
+        hz_to_interval_us(0)
+        raise AssertionError("must refuse interval 0")
+    except ValueError:
+        pass
+    cmd = command_long_pkt(2, 6, 1, CMD_SET_MESSAGE_INTERVAL, 31, interval)
+    parsed = parse_one(cmd)
+    assert parsed is not None and parsed[0] == 76
+    command, = struct.unpack_from("<H", parsed[1], 28)
+    assert command == CMD_SET_MESSAGE_INTERVAL
+    print("set-mavlink-rates self-test ok")
+    return 0
+
+
+def wait_sysid(sock, target, deadline):
+    seq = 0
+    while time.time() < deadline:
+        try:
+            sock.sendto(heartbeat_pkt(seq), target)
+        except OSError:
+            pass
+        seq = (seq + 1) & 0xFF
+        try:
+            data, _addr = sock.recvfrom(2048)
+        except socket.timeout:
+            continue
+        parsed = parse_one(data)
+        if not parsed:
+            continue
+        msgid, _payload, sysid = parsed
+        if msgid == 0 and sysid not in (0, 255):
+            return sysid
+    return None
+
+
+def apply_once(host, port, seconds):
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock.settimeout(0.4)
+    sock.bind(("0.0.0.0", 0))
+    target = (host, port)
+    try:
+        sysid = wait_sysid(sock, target, time.time() + seconds)
+        if sysid is None:
+            print("no FC HEARTBEAT on %s:%s" % (host, port), file=sys.stderr)
+            return 1
+        seq = 1
+        for msgid, hz in KEEP_HZ.items():
+            interval_us = hz_to_interval_us(hz)
+            sock.sendto(
+                command_long_pkt(
+                    seq, sysid, 1, CMD_SET_MESSAGE_INTERVAL, msgid, interval_us
+                ),
+                target,
+            )
+            seq = (seq + 1) & 0xFF
+            print(
+                "SET_MESSAGE_INTERVAL id=%s hz=%s interval_us=%.0f sysid=%s"
+                % (msgid, hz, interval_us, sysid)
+            )
+        return 0
+    finally:
+        sock.close()
+
+
+def loop(host, port, wait_s, retry_s):
+    while True:
+        apply_once(host, port, wait_s)
+        time.sleep(retry_s)
+
+
+def parse_endpoint(raw):
+    host, port_s = raw.rsplit(":", 1)
+    return host, int(port_s)
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--self-test", action="store_true")
+    parser.add_argument(
+        "--endpoint",
+        default=os.environ.get("RATES_ENDPOINT", "127.0.0.1:14561"),
+    )
+    parser.add_argument("--once", action="store_true")
+    parser.add_argument("--wait-seconds", type=float, default=12.0)
+    parser.add_argument("--retry-seconds", type=float, default=30.0)
+    args = parser.parse_args(argv)
+    if args.self_test:
+        return self_test()
+    host, port = parse_endpoint(args.endpoint)
+    if host != "127.0.0.1" and host != "::1":
+        print("refuse non-loopback endpoint %s (14560 is GCS)" % args.endpoint, file=sys.stderr)
+        return 2
+    if args.once:
+        return apply_once(host, port, args.wait_seconds)
+    loop(host, port, args.wait_seconds, args.retry_seconds)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

@@ -6,6 +6,7 @@ SERVICE="xgc2-fs150-mavlink-router.service"
 if command -v systemctl >/dev/null 2>&1; then
   systemctl daemon-reload >/dev/null 2>&1 || true
   systemctl reset-failed "${SERVICE}" >/dev/null 2>&1 || true
+  systemctl reset-failed xgc2-fs150-mavlink-rates.service >/dev/null 2>&1 || true
 fi
 
 if [ "$1" = "purge" ]; then

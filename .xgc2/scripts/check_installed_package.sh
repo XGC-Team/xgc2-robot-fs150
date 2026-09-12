@@ -16,6 +16,7 @@ grep -q 'xgc2_camera_driver' /opt/xgc2/robots/fs150/onboard/sensors/src/fs150_on
 test -f /opt/xgc2/robots/fs150/onboard/sensors/legacy/README.md
 test -f /opt/xgc2/robots/fs150/onboard/autostart/README.md
 test -f /opt/xgc2/robots/fs150/onboard/autostart/src/fs150_onboard_autostart/systemd/xgc2-fs150-mavlink-router.service
+test -f /opt/xgc2/robots/fs150/onboard/autostart/src/fs150_onboard_autostart/systemd/xgc2-fs150-mavlink-rates.service
 test -f /opt/xgc2/robots/fs150/onboard/autostart/src/fs150_onboard_autostart/systemd/xgc2-fs150-camera.service
 test -f /opt/xgc2/robots/fs150/onboard/autostart/src/fs150_onboard_autostart/systemd/xgc2-fs150-media-edge.service
 test -f /opt/xgc2/robots/fs150/onboard/autostart/src/fs150_onboard_autostart/systemd/xgc2-fs150-mavros.service
@@ -27,6 +28,7 @@ test ! -e /opt/xgc2/robots/fs150/onboard/communication/src/fs150_mocap/launch/vr
 grep -q 'xgc2_vrpn_relay' /opt/xgc2/robots/fs150/onboard/communication/src/fs150_mocap/launch/mocap.launch
 grep -q 'FS150_01' /opt/xgc2/robots/fs150/onboard/communication/src/fs150_mocap/launch/mocap.launch
 test -x /opt/xgc2/robots/fs150/onboard/autostart/src/fs150_onboard_autostart/scripts/start-communication
+test -x /opt/xgc2/robots/fs150/onboard/autostart/src/fs150_onboard_autostart/scripts/set-mavlink-rates
 test -x /opt/xgc2/robots/fs150/onboard/autostart/src/fs150_onboard_autostart/scripts/start-mavros
 test -x /opt/xgc2/robots/fs150/onboard/autostart/src/fs150_onboard_autostart/scripts/start-mocap
 test ! -e /opt/xgc2/robots/fs150/onboard/mavlink-router
@@ -38,6 +40,7 @@ test -f /etc/xgc2/fs150-mavlink-router/router.conf
 test -d /etc/xgc2/fs150-mavlink-router/config.d
 test -f /etc/xgc2/fs150/onboard.env
 test -x /usr/lib/xgc2/fs150/autostart/start-communication
+test -x /usr/lib/xgc2/fs150/autostart/set-mavlink-rates
 test -x /usr/lib/xgc2/fs150/autostart/start-mavros
 test -x /usr/lib/xgc2/fs150/autostart/start-mocap
 test -x /usr/lib/xgc2/fs150/autostart/start-camera
@@ -45,6 +48,7 @@ test ! -e /usr/lib/xgc2/fs150/check-px4-params.py
 test ! -e /usr/lib/xgc2/fs150/check-px4-params.sh
 test ! -e /usr/share/xgc2/fs150/expected-px4-params.json
 test -f /lib/systemd/system/xgc2-fs150-mavlink-router.service
+test -f /lib/systemd/system/xgc2-fs150-mavlink-rates.service
 test -f /lib/systemd/system/xgc2-fs150-mavros.service
 test -f /lib/systemd/system/xgc2-fs150-mocap.service
 test -f /lib/systemd/system/xgc2-fs150-camera.service
@@ -57,11 +61,13 @@ grep -q 'xgc2_vrpn_relay' /usr/share/xgc2/fs150/mocap/launch/mocap.launch
 grep -q 'FS150_01' /usr/share/xgc2/fs150/mocap/launch/mocap.launch
 grep -q '^Device = /dev/ttyS7$' /etc/xgc2/fs150-mavlink-router/router.conf
 grep -q '^Baud = 921600$' /etc/xgc2/fs150-mavlink-router/router.conf
-grep -q '^BlockMsgIdOut = 105, 106, 331$' /etc/xgc2/fs150-mavlink-router/router.conf
+grep -q '^BlockMsgIdOut = 105, 106, 331, 132, 30$' /etc/xgc2/fs150-mavlink-router/router.conf
+grep -q 'xgc2-fs150-mavlink-rates.service' /lib/systemd/system/xgc2-fs150-mavlink-router.service
 
 if command -v systemctl >/dev/null 2>&1; then
   for unit in \
     xgc2-fs150-mavlink-router.service \
+    xgc2-fs150-mavlink-rates.service \
     xgc2-fs150-mavros.service \
     xgc2-fs150-mocap.service \
     xgc2-fs150-camera.service \

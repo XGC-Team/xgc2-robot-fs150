@@ -15,12 +15,21 @@ if [ "$1" = "configure" ] && command -v systemctl >/dev/null 2>&1; then
     systemctl disable "${old_service}" >/dev/null 2>&1 || true
   done
 
-  # Install units only. Never enable or start communication, MAVROS,
-  # camera, or Media Edge.
+  # Install units only. Never enable communication, rates, MAVROS,
+  # camera, or Media Edge. Enabling the router is the operator/user-script
+  # path; the unit Wants the rates helper.
+  systemctl disable xgc2-fs150-mavlink-rates.service >/dev/null 2>&1 || true
   systemctl disable xgc2-fs150-mavros.service >/dev/null 2>&1 || true
   systemctl disable xgc2-fs150-mocap.service >/dev/null 2>&1 || true
   systemctl disable xgc2-fs150-camera.service >/dev/null 2>&1 || true
   systemctl disable xgc2-fs150-media-edge.service >/dev/null 2>&1 || true
+
+  # If the operator already has the router running, pick up the new
+  # helper without enabling it. Fresh install leaves both stopped.
+  if systemd_running && systemctl is-active --quiet xgc2-fs150-mavlink-router.service; then
+    systemctl restart xgc2-fs150-mavlink-rates.service >/dev/null 2>&1 || \
+      systemctl start xgc2-fs150-mavlink-rates.service >/dev/null 2>&1 || true
+  fi
 fi
 
 exit 0
