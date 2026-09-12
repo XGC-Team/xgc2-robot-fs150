@@ -28,7 +28,7 @@ DEFAULT_EXPECTED = {
     "EKF2_AID_MASK": 24,
     "EKF2_HGT_MODE": 3,
     "EKF2_MAG_TYPE": 5,
-    "EKF2_EV_DELAY": 80,  # first field test; ~2x empirical 40 (unc TIMESYNC). not the formula. reboot to resize EKF IMU ring.
+    "EKF2_EV_DELAY": 60,  # check table. empirical formula is 40/25; reboot to resize EKF IMU ring.
     "COM_ARM_WO_GPS": 1,
     "COM_KILL_DISARM": 0,
     "COM_DISARM_LAND": 1,
@@ -393,7 +393,7 @@ def self_test():
     assert values_match(1.5, 1.50001, 9)
     assert DEFAULT_EXPECTED["SER_TEL1_BAUD"] == 921600
     assert DEFAULT_EXPECTED["EKF2_AID_MASK"] == 24
-    assert DEFAULT_EXPECTED["EKF2_EV_DELAY"] == 80
+    assert DEFAULT_EXPECTED["EKF2_EV_DELAY"] == 60
     assert "EKF2_EV_DELAY" in REBOOT_HINT
     assert DEFAULT_EXPECTED["BAT1_N_CELLS"] == 3
     set_pkt = param_set_pkt(0, 14, 1, "SER_TEL1_BAUD", 921600, 6)
