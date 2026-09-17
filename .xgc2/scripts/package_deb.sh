@@ -98,7 +98,7 @@ EOF
 
   find "${pkg_root}" -type d -exec chmod 0755 {} +
   find "${pkg_root}" -type f -exec chmod 0644 {} +
-  find "${pkg_root}${INSTALL_PREFIX}/onboard/autostart" -type f \( -name 'start-*' -o -name 'wait-device' -o -name 'set-mavlink-rates' \) -exec chmod 0755 {} +
+  find "${pkg_root}${INSTALL_PREFIX}/onboard/autostart" -type f \( -name 'start-*' -o -name 'wait-device' \) -exec chmod 0755 {} +
   chmod 0755 "${pkg_root}/DEBIAN"
 
   fakeroot dpkg-deb --build \
@@ -134,14 +134,10 @@ build_router_package() {
     "${autostart_src}/scripts/start-mocap" \
     "${autostart_src}/scripts/start-camera" \
     "${autostart_src}/scripts/start-media-edge" \
-    "${autostart_src}/scripts/set-mavlink-rates" \
     "${pkg_root}${autostart_lib}/"
   install -m 0644 \
     "${autostart_src}/systemd/xgc2-fs150-mavlink-router.service" \
     "${pkg_root}/lib/systemd/system/xgc2-fs150-mavlink-router.service"
-  install -m 0644 \
-    "${autostart_src}/systemd/xgc2-fs150-mavlink-rates.service" \
-    "${pkg_root}/lib/systemd/system/xgc2-fs150-mavlink-rates.service"
   install -m 0644 \
     "${autostart_src}/systemd/xgc2-fs150-camera.service" \
     "${pkg_root}/lib/systemd/system/xgc2-fs150-camera.service"
@@ -197,7 +193,6 @@ XGC2 FS150 MAVLink Router
 
 Installed services (from onboard/autostart):
   xgc2-fs150-mavlink-router.service   (communication, install-only)
-  xgc2-fs150-mavlink-rates.service    (31/32 at 15 Hz on 14561; Wants from router)
   xgc2-fs150-mavros.service           (install-only)
   xgc2-fs150-mocap.service            (install-only)
   xgc2-fs150-camera.service           (install-only)
@@ -223,8 +218,7 @@ EOF
     "${pkg_root}${autostart_lib}/start-mavros" \
     "${pkg_root}${autostart_lib}/start-mocap" \
     "${pkg_root}${autostart_lib}/start-camera" \
-    "${pkg_root}${autostart_lib}/start-media-edge" \
-    "${pkg_root}${autostart_lib}/set-mavlink-rates"
+    "${pkg_root}${autostart_lib}/start-media-edge"
 
   fakeroot dpkg-deb --build \
     "${pkg_root}" \

@@ -1,7 +1,7 @@
 schema: xgc2.product.v1
 id: xgc2-fs150
 name: XGC2 FS150 Robot
-version: 0.1.0-20
+version: 0.1.0-21
 kind: mixed
 summary: Real FS150 robot onboard profile, documentation, and runtime dependency aggregation.
 groups:
@@ -46,15 +46,17 @@ usage:
 
     test -f /etc/xgc2/fs150-mavlink-router/router.conf
 
+    test -f /etc/apt/preferences.d/xgc2-fs150-retract-20
+
     test -f /lib/systemd/system/xgc2-fs150-camera.service
 
-    test -f /lib/systemd/system/xgc2-fs150-mavlink-rates.service
+    test ! -e /lib/systemd/system/xgc2-fs150-mavlink-rates.service
+
+    ! grep -q xgc2-fs150-mavlink-rates /lib/systemd/system/xgc2-fs150-mavlink-router.service
 
     test -f /lib/systemd/system/xgc2-fs150-mavros.service
 
     ! systemctl is-enabled xgc2-fs150-mavlink-router.service
-
-    ! systemctl is-enabled xgc2-fs150-mavlink-rates.service
 
     ! systemctl is-enabled xgc2-fs150-mavros.service
 
@@ -68,10 +70,10 @@ ownership:
   - /opt/xgc2/robots/fs150
   - /usr/share/doc/xgc2-fs150
   - /etc/xgc2/fs150-mavlink-router
+  - /etc/apt/preferences.d/xgc2-fs150-retract-20
   - /etc/xgc2/fs150/onboard.env
   - /usr/lib/xgc2/fs150/autostart
   - /lib/systemd/system/xgc2-fs150-mavlink-router.service
-  - /lib/systemd/system/xgc2-fs150-mavlink-rates.service
   - /lib/systemd/system/xgc2-fs150-mavros.service
   - /lib/systemd/system/xgc2-fs150-mocap.service
   - /lib/systemd/system/xgc2-fs150-camera.service
@@ -84,4 +86,4 @@ release:
     xgc2-mavlink-router: verify
     xgc2-media-edge: verify
   apt_versions:
-    focal: 0.1.0-20
+    focal: 0.1.0-21
