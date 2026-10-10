@@ -2,6 +2,14 @@
 set -euo pipefail
 
 dpkg -s xgc2-fs150 >/dev/null
+# The relay is the compiled node of ros-noetic-xgc2-vrpn-relay, not the former Python package.
+dpkg -s ros-noetic-xgc2-vrpn-relay >/dev/null
+if dpkg -s xgc2-vrpn-relay >/dev/null 2>&1; then
+  echo "the former Python package xgc2-vrpn-relay is still installed" >&2
+  exit 1
+fi
+readelf -h /opt/ros/noetic/lib/xgc2_vrpn_relay/vrpn_relay >/dev/null
+test ! -e /opt/ros/noetic/lib/xgc2_vrpn_relay/xgc2_vrpn_relay
 test -d /opt/xgc2/robots/fs150/docs
 test -f /opt/xgc2/robots/fs150/README.md
 test -f /opt/xgc2/robots/fs150/docs/rk356x_performance_mode.md
@@ -59,10 +67,19 @@ test ! -e /usr/share/xgc2/fs150/mocap/launch/vrpn.launch
 grep -q '127.0.0.1:14561' /usr/share/xgc2/fs150/mavros/launch/mavros.launch
 grep -q 'xgc2_vrpn_relay' /usr/share/xgc2/fs150/mocap/launch/mocap.launch
 grep -q 'FS150_01' /usr/share/xgc2/fs150/mocap/launch/mocap.launch
+# The installed launch file composes with the installed relay package.
+set +u
+# shellcheck disable=SC1091
+source /opt/ros/noetic/setup.bash
+set -u
+roslaunch --files /usr/share/xgc2/fs150/mocap/launch/mocap.launch >/dev/null
 grep -q '^Device = /dev/ttyS7$' /etc/xgc2/fs150-mavlink-router/router.conf
 grep -q '^Baud = 921600$' /etc/xgc2/fs150-mavlink-router/router.conf
 grep -q '^BlockMsgIdOut = 105, 106, 331, 132$' /etc/xgc2/fs150-mavlink-router/router.conf
-! grep -q 'xgc2-fs150-mavlink-rates' /lib/systemd/system/xgc2-fs150-mavlink-router.service
+if grep -q 'xgc2-fs150-mavlink-rates' /lib/systemd/system/xgc2-fs150-mavlink-router.service; then
+  echo "the router unit still refers to the retired mavlink-rates helper" >&2
+  exit 1
+fi
 test -f /etc/apt/preferences.d/xgc2-fs150-retract-20
 
 if command -v systemctl >/dev/null 2>&1; then

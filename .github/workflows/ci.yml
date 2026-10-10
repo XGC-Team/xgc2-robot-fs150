@@ -58,6 +58,8 @@ jobs:
           assert not (root / "fs150_mocap/launch/vrpn.launch").exists()
           print("fs150 mocap is assembly-only")
           PY
+          grep -q 'ros-noetic-xgc2-vrpn-relay (>= 0.2.0-1)' .xgc2/scripts/package_deb.sh
+          grep -q 'ros-noetic-xgc2-vrpn-relay (>= 0.2.0-1)' .xgc2/product.yml
 
 
       - name: Build and install-check deb package

@@ -76,13 +76,13 @@ Section: metapackages
 Priority: optional
 Architecture: all
 Maintainer: XGC2 <apt@example.com>
-Depends: chrony, python3, ros-noetic-ros-base, ros-noetic-mavros, ros-noetic-mavros-extras, ros-noetic-vrpn-client-ros, xgc2-mavlink-router (>= 3.0.0-7+focal)
+Depends: chrony, python3, ros-noetic-ros-base, ros-noetic-mavros, ros-noetic-mavros-extras, ros-noetic-vrpn-client-ros, ros-noetic-xgc2-vrpn-relay (>= 0.2.0-1), xgc2-mavlink-router (>= 3.0.0-7+focal)
 Recommends: htop, i2c-tools, iproute2, net-tools, python3-pip, socat, tmux, usbutils
 Description: XGC2 FS150 real-vehicle profile
  Real FS150 robot/onboard aggregation package for XGC2.
  It installs FS150 vehicle resources under /opt/xgc2/robots/fs150 and pulls
- the ROS Noetic, MAVROS, VRPN, and MAVLink router dependencies expected on
- the FS150 onboard computer. It does not pull Linux host-utils.
+ the ROS Noetic, MAVROS, VRPN client and relay, and MAVLink router
+ dependencies expected on the FS150 onboard computer. It does not pull Linux host-utils.
 EOF
 
   cat > "${pkg_root}/usr/share/doc/${PROFILE_PACKAGE}/README" <<EOF

@@ -1,7 +1,7 @@
 schema: xgc2.product.v1
 id: xgc2-fs150
 name: XGC2 FS150 Robot
-version: 0.1.0-21
+version: 0.1.0-22
 kind: mixed
 summary: Real FS150 robot onboard profile, documentation, and runtime dependency aggregation.
 groups:
@@ -22,6 +22,7 @@ apt:
   - ros-noetic-mavros
   - ros-noetic-mavros-extras
   - ros-noetic-vrpn-client-ros
+  - ros-noetic-xgc2-vrpn-relay (>= 0.2.0-1)
   - xgc2-mavlink-router (>= 3.0.0-7+focal)
   recommends:
   - xgc2-media-edge
@@ -43,6 +44,8 @@ usage:
     dpkg -s xgc2-fs150
 
     dpkg -s xgc2-fs150-mavlink-router
+
+    dpkg -s ros-noetic-xgc2-vrpn-relay
 
     test -f /etc/xgc2/fs150-mavlink-router/router.conf
 
@@ -85,5 +88,6 @@ release:
   dependency_policy:
     xgc2-mavlink-router: verify
     xgc2-media-edge: verify
+    xgc2-vrpn-relay: verify
   apt_versions:
-    focal: 0.1.0-21
+    focal: 0.1.0-22
