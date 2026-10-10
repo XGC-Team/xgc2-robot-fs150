@@ -54,6 +54,7 @@ jobs:
           mocap = (root / "fs150_mocap/launch/mocap.launch").read_text()
           assert "xgc2_vrpn_relay" in mocap
           assert "FS150_01" in mocap
+          assert '<arg name="jump_reacquire_s" value="0.0" />' in mocap
           assert not (root / "fs150_mocap/scripts/vrpn_relay").exists()
           assert not (root / "fs150_mocap/launch/vrpn.launch").exists()
           print("fs150 mocap is assembly-only")

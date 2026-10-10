@@ -12,5 +12,10 @@
     <arg name="tracker" value="$(arg tracker)" />
     <arg name="vision_out" value="$(arg vision_out)" />
     <arg name="vision_target_hz" value="$(arg vision_target_hz)" />
+    <!-- The relay can take over a track that jumped and stays where it is (default 1 s). Off on
+         the aircraft: a jump stays rejected, as before that option existed. Turning it on is an
+         FS150 owner decision, because PX4 EKF2 would see a step in the vision position when the
+         track is taken over. -->
+    <arg name="jump_reacquire_s" value="0.0" />
   </include>
 </launch>

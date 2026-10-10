@@ -73,6 +73,9 @@ set +u
 source /opt/ros/noetic/setup.bash
 set -u
 roslaunch --files /usr/share/xgc2/fs150/mocap/launch/mocap.launch >/dev/null
+# The aircraft keeps a jump rejected; re-acquiring a track is an FS150 owner decision.
+fs150_params="$(roslaunch --dump-params /usr/share/xgc2/fs150/mocap/launch/mocap.launch)"
+grep -Eq '^/vrpn_relay/jump_reacquire_s: 0(\.0)?$' <<<"${fs150_params}"
 grep -q '^Device = /dev/ttyS7$' /etc/xgc2/fs150-mavlink-router/router.conf
 grep -q '^Baud = 921600$' /etc/xgc2/fs150-mavlink-router/router.conf
 grep -q '^BlockMsgIdOut = 105, 106, 331, 132$' /etc/xgc2/fs150-mavlink-router/router.conf
