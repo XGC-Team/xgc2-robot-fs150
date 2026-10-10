@@ -48,7 +48,7 @@ sudo systemctl start xgc2-fs150-mavros.service
 Each aircraft also runs its own VRPN client against **one** Motive
 tracker (`FS150_01` by default). `fs150_mocap` only names that tracker
 and turns vision_pose on. The client, quality gate, and 30 Hz drop
-policy live in APT `xgc2-vrpn-relay` (`xgc2_vrpn_relay`).
+policy live in APT `ros-noetic-xgc2-vrpn-relay` (`xgc2_vrpn_relay`, a C++ node).
 
 ```bash
 sudo systemctl start xgc2-fs150-mocap.service

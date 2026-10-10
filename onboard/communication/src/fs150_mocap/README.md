@@ -1,7 +1,8 @@
 # FS150 mocap
 
 Assembly only. The client, quality gate, and vision_pose rate live in
-`xgc2_vrpn_relay` (`XGC-Team/xgc2-vrpn-relay`).
+`xgc2_vrpn_relay` (`XGC-Team/xgc2-vrpn-relay`), a compiled roscpp node shipped as
+APT `ros-noetic-xgc2-vrpn-relay`, which `xgc2-fs150` depends on.
 
 This package names **one** Motive tracker and turns vision_pose on.
 

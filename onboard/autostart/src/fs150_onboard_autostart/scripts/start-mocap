@@ -46,6 +46,11 @@ if [[ -z "${LAUNCH}" ]]; then
   exit 1
 fi
 
+if ! rospack find xgc2_vrpn_relay >/dev/null 2>&1; then
+  echo "fs150 mocap: ROS package xgc2_vrpn_relay not found (apt install ros-${ROS_DISTRO}-xgc2-vrpn-relay)" >&2
+  exit 1
+fi
+
 SERVER="${VRPN_SERVER:-127.0.0.1}"
 PORT="${VRPN_PORT:-3883}"
 TRACKER="${MOCAP_RIGID_BODY:-FS150_01}"
