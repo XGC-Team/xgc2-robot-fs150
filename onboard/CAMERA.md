@@ -10,8 +10,7 @@ both after the last of them has left.
 | Capture, one H264 encode, JPEG snapshots | `xgc-media-edge` pipeline source `fs150_cam`, template `x264-v4l2src-raw` (`/dev/video8`, NV12, 640x480 at 30) |
 | Source roster | `fs150_onboard_sensors/config/media-sources.json` |
 | WebRTC | unit `xgc2-fs150-media-edge.service` |
-| ROS Image | none; nothing else may open `/dev/video8` while a viewer is connected |
-| Forbidden default | `camera_ros` |
+| ROS Image | none; Media Edge is the sole owner of `/dev/video8` |
 
 Start it with `sudo systemctl start xgc2-fs150-media-edge.service` and open
 `http://<wlan0 address>:18090/?source=fs150_cam`. The unit runs as `marvsmart`

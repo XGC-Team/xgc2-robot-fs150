@@ -25,7 +25,7 @@ test ! -e /opt/xgc2/robots/fs150/onboard/sensors/src/fs150_onboard_sensors/launc
 test -f /opt/xgc2/robots/fs150/onboard/sensors/src/fs150_onboard_sensors/config/media-sources.json
 grep -q '"kind": "pipeline"' /opt/xgc2/robots/fs150/onboard/sensors/src/fs150_onboard_sensors/config/media-sources.json
 ! grep -rq 'xgc_native_v4l2_rtp\|xgc_ros_image_rtp\|native_v4l2_media' /opt/xgc2/robots/fs150/onboard
-test -f /opt/xgc2/robots/fs150/onboard/sensors/legacy/README.md
+test ! -e /opt/xgc2/robots/fs150/onboard/sensors/legacy
 test -f /opt/xgc2/robots/fs150/onboard/autostart/README.md
 test -f /opt/xgc2/robots/fs150/onboard/autostart/src/fs150_onboard_autostart/systemd/xgc2-fs150-mavlink-router.service
 test ! -e /opt/xgc2/robots/fs150/onboard/autostart/src/fs150_onboard_autostart/systemd/xgc2-fs150-mavlink-rates.service

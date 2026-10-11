@@ -5,7 +5,6 @@ Not min-boot. The camera is a Media Edge pipeline source.
 
 ```text
 src/fs150_onboard_sensors    media roster: config/media-sources.json
-legacy/camera_ros            field fork; do not launch
 ```
 
 ## Contract
@@ -14,8 +13,8 @@ legacy/camera_ros            field fork; do not launch
 rkisp /dev/video8  --pipeline source fs150_cam-->  xgc-media-edge --WebRTC--> browser :18090
 ```
 
-Media Edge opens the device and runs the encoder only while the source is
-watched. Do **not** run `camera_ros` on this device while Media Edge may need it.
+Media Edge is the only camera source owner. It opens the device and runs the
+encoder only while the source is leased by a viewer or an on-demand operation.
 
 LIVE 2026-08-15: `/dev/video8` = `rkisp_mainpath`. `rkaiq_3A` must be running.
 
