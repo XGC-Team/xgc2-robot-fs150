@@ -4,6 +4,6 @@ project(fs150_onboard_sensors)
 find_package(catkin REQUIRED)
 catkin_package()
 
-install(DIRECTORY launch config
+install(DIRECTORY config
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )

@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Browser WebRTC. Does not open the camera.
+# Browser WebRTC for the onboard camera. The camera is a pipeline source of
+# Media Edge: it opens the V4L2 device and runs the encoder only while a
+# viewer, a capture or a recording needs it, so no camera service runs beside it.
 EDGE="${XGC_MEDIA_EDGE:-$(command -v xgc-media-edge || true)}"
 if [[ -z "${EDGE}" || ! -x "${EDGE}" ]]; then
   echo "xgc-media-edge not installed (apt xgc2-media-edge)" >&2
@@ -16,11 +18,20 @@ PUBLIC_IP="${MEDIA_PUBLIC_IP:-}"
 if [[ -z "${PUBLIC_IP}" ]]; then
   PUBLIC_IP="$(ip -4 -o addr show wlan0 2>/dev/null | awk '{print $4}' | cut -d/ -f1 | head -1 || true)"
 fi
-mkdir -p /tmp/xgc2/media /run/xgc2/media-edge
+
+# The unit grants RUNTIME as a private directory (RuntimeDirectory=). Media
+# Edge needs its control socket, MediaMTX and pipeline directories inside it.
+RUNTIME="${MEDIA_RUNTIME:-/run/xgc2/media-edge}"
+/usr/lib/xgc2-media-edge/prepare-runtime \
+  --runtime-root "${RUNTIME}" --uid "$(id -u)" --gid "$(id -g)" >/dev/null
+
 ARGS=(
   --control-address "${MEDIA_CONTROL_ADDRESS:-0.0.0.0:18090}"
+  --target-id "${XGC2_TARGET_ID:-$(hostname)}"
+  --rpc-socket "${RUNTIME}/control/control.sock"
+  --mediamtx-runtime-dir "${RUNTIME}/mediamtx"
+  --pipeline-runtime-dir "${RUNTIME}/pipelines"
   --sources-config "${ROSTER}"
-  --mediamtx-runtime-dir "${MEDIA_MTX_RUNTIME:-/run/xgc2/media-edge}"
 )
 if [[ -n "${PUBLIC_IP}" ]]; then
   ARGS+=(--public-ip "${PUBLIC_IP}")

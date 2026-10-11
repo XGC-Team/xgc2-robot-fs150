@@ -10,11 +10,11 @@ communication/           MAVLink router topology (router.conf)
                          binary comes from APT xgc2-mavlink-router
 
 sensors/src/             optional MIPI camera assembly
-  fs150_onboard_sensors  compose launch + media-sources.json
-                         (capture is shared xgc2_camera_driver)
+  fs150_onboard_sensors  media-sources.json: the camera is a
+                         Media Edge pipeline source
 
 autostart/src/           fs150_onboard_autostart
-                         communication + MAVROS + camera + Media Edge
+                         communication + MAVROS + mocap + Media Edge
                          systemd (install only; no unit is boot-enabled)
 ```
 

@@ -40,7 +40,7 @@ jobs:
           bash -n onboard/autostart/src/fs150_onboard_autostart/scripts/start-communication
           bash -n onboard/autostart/src/fs150_onboard_autostart/scripts/start-mavros
           bash -n onboard/autostart/src/fs150_onboard_autostart/scripts/start-mocap
-          bash -n onboard/autostart/src/fs150_onboard_autostart/scripts/start-camera
+          bash -n onboard/autostart/src/fs150_onboard_autostart/scripts/start-media-edge
           python3 - <<'PY'
           from pathlib import Path
           import xml.etree.ElementTree as ET
