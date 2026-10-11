@@ -19,13 +19,16 @@ test -f /opt/xgc2/robots/fs150/onboard/communication/mavlink-router/router.conf
 test ! -e /opt/xgc2/robots/fs150/onboard/communication/mavlink-router/xgc2-fs150-mavlink-router.service
 test -f /opt/xgc2/robots/fs150/onboard/sensors/README.md
 test ! -e /opt/xgc2/robots/fs150/onboard/sensors/src/xgc_camera_media
-test -f /opt/xgc2/robots/fs150/onboard/sensors/src/fs150_onboard_sensors/launch/camera.launch
-grep -q 'xgc2_camera_driver' /opt/xgc2/robots/fs150/onboard/sensors/src/fs150_onboard_sensors/launch/camera.launch
+test ! -e /opt/xgc2/robots/fs150/onboard/sensors/src/fs150_onboard_sensors/launch
+test -f /opt/xgc2/robots/fs150/onboard/sensors/src/fs150_onboard_sensors/config/media-sources.json
+grep -q '"kind": "pipeline"' /opt/xgc2/robots/fs150/onboard/sensors/src/fs150_onboard_sensors/config/media-sources.json
+! grep -rq 'xgc_native_v4l2_rtp\|xgc_ros_image_rtp\|native_v4l2_media' /opt/xgc2/robots/fs150/onboard
 test -f /opt/xgc2/robots/fs150/onboard/sensors/legacy/README.md
 test -f /opt/xgc2/robots/fs150/onboard/autostart/README.md
 test -f /opt/xgc2/robots/fs150/onboard/autostart/src/fs150_onboard_autostart/systemd/xgc2-fs150-mavlink-router.service
 test ! -e /opt/xgc2/robots/fs150/onboard/autostart/src/fs150_onboard_autostart/systemd/xgc2-fs150-mavlink-rates.service
-test -f /opt/xgc2/robots/fs150/onboard/autostart/src/fs150_onboard_autostart/systemd/xgc2-fs150-camera.service
+test ! -e /opt/xgc2/robots/fs150/onboard/autostart/src/fs150_onboard_autostart/systemd/xgc2-fs150-camera.service
+test ! -e /opt/xgc2/robots/fs150/onboard/autostart/src/fs150_onboard_autostart/scripts/start-camera
 test -f /opt/xgc2/robots/fs150/onboard/autostart/src/fs150_onboard_autostart/systemd/xgc2-fs150-media-edge.service
 test -f /opt/xgc2/robots/fs150/onboard/autostart/src/fs150_onboard_autostart/systemd/xgc2-fs150-mavros.service
 test -f /opt/xgc2/robots/fs150/onboard/autostart/src/fs150_onboard_autostart/systemd/xgc2-fs150-mocap.service
@@ -51,7 +54,8 @@ test -x /usr/lib/xgc2/fs150/autostart/start-communication
 test ! -e /usr/lib/xgc2/fs150/autostart/set-mavlink-rates
 test -x /usr/lib/xgc2/fs150/autostart/start-mavros
 test -x /usr/lib/xgc2/fs150/autostart/start-mocap
-test -x /usr/lib/xgc2/fs150/autostart/start-camera
+test ! -e /usr/lib/xgc2/fs150/autostart/start-camera
+test -x /usr/lib/xgc2/fs150/autostart/start-media-edge
 test ! -e /usr/lib/xgc2/fs150/check-px4-params.py
 test ! -e /usr/lib/xgc2/fs150/check-px4-params.sh
 test ! -e /usr/share/xgc2/fs150/expected-px4-params.json
@@ -59,7 +63,10 @@ test -f /lib/systemd/system/xgc2-fs150-mavlink-router.service
 test ! -e /lib/systemd/system/xgc2-fs150-mavlink-rates.service
 test -f /lib/systemd/system/xgc2-fs150-mavros.service
 test -f /lib/systemd/system/xgc2-fs150-mocap.service
-test -f /lib/systemd/system/xgc2-fs150-camera.service
+test ! -e /lib/systemd/system/xgc2-fs150-camera.service
+test -f /lib/systemd/system/xgc2-fs150-media-edge.service
+grep -q '^RuntimeDirectoryMode=0700$' /lib/systemd/system/xgc2-fs150-media-edge.service
+grep -q -- '--rpc-socket' /usr/lib/xgc2/fs150/autostart/start-media-edge
 test -f /usr/share/xgc2/fs150/mavros/launch/mavros.launch
 test -f /usr/share/xgc2/fs150/mocap/launch/mocap.launch
 test ! -e /usr/share/xgc2/fs150/mocap/vrpn_relay
@@ -90,7 +97,6 @@ if command -v systemctl >/dev/null 2>&1; then
     xgc2-fs150-mavlink-router.service \
     xgc2-fs150-mavros.service \
     xgc2-fs150-mocap.service \
-    xgc2-fs150-camera.service \
     xgc2-fs150-media-edge.service
   do
     if systemctl is-enabled "${unit}" >/dev/null 2>&1; then

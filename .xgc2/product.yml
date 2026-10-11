@@ -1,7 +1,7 @@
 schema: xgc2.product.v1
 id: xgc2-fs150
 name: XGC2 FS150 Robot
-version: 0.1.0-22
+version: 0.2.0-1
 kind: mixed
 summary: Real FS150 robot onboard profile, documentation, and runtime dependency aggregation.
 groups:
@@ -25,7 +25,7 @@ apt:
   - ros-noetic-xgc2-vrpn-relay (>= 0.2.0-1)
   - xgc2-mavlink-router (>= 3.0.0-7+focal)
   recommends:
-  - xgc2-media-edge
+  - xgc2-media-edge (>= 0.7.0-1~focal)
   - gstreamer1.0-tools
   - gstreamer1.0-plugins-good
   - gstreamer1.0-plugins-ugly
@@ -51,7 +51,9 @@ usage:
 
     test -f /etc/apt/preferences.d/xgc2-fs150-retract-20
 
-    test -f /lib/systemd/system/xgc2-fs150-camera.service
+    test ! -e /lib/systemd/system/xgc2-fs150-camera.service
+
+    test -f /lib/systemd/system/xgc2-fs150-media-edge.service
 
     test ! -e /lib/systemd/system/xgc2-fs150-mavlink-rates.service
 
@@ -79,7 +81,6 @@ ownership:
   - /lib/systemd/system/xgc2-fs150-mavlink-router.service
   - /lib/systemd/system/xgc2-fs150-mavros.service
   - /lib/systemd/system/xgc2-fs150-mocap.service
-  - /lib/systemd/system/xgc2-fs150-camera.service
   - /usr/share/xgc2/fs150/mocap
   - /lib/systemd/system/xgc2-fs150-media-edge.service
   - /usr/share/xgc2/fs150/mavros
@@ -90,4 +91,4 @@ release:
     xgc2-media-edge: verify
     xgc2-vrpn-relay: verify
   apt_versions:
-    focal: 0.1.0-22
+    focal: 0.2.0-1

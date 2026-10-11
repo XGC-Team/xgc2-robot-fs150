@@ -132,15 +132,11 @@ build_router_package() {
     "${autostart_src}/scripts/start-communication" \
     "${autostart_src}/scripts/start-mavros" \
     "${autostart_src}/scripts/start-mocap" \
-    "${autostart_src}/scripts/start-camera" \
     "${autostart_src}/scripts/start-media-edge" \
     "${pkg_root}${autostart_lib}/"
   install -m 0644 \
     "${autostart_src}/systemd/xgc2-fs150-mavlink-router.service" \
     "${pkg_root}/lib/systemd/system/xgc2-fs150-mavlink-router.service"
-  install -m 0644 \
-    "${autostart_src}/systemd/xgc2-fs150-camera.service" \
-    "${pkg_root}/lib/systemd/system/xgc2-fs150-camera.service"
   install -m 0644 \
     "${autostart_src}/systemd/xgc2-fs150-media-edge.service" \
     "${pkg_root}/lib/systemd/system/xgc2-fs150-media-edge.service"
@@ -179,7 +175,7 @@ Priority: optional
 Architecture: all
 Maintainer: XGC2 <apt@example.com>
 Depends: xgc2-mavlink-router (>= 3.0.0-7+focal), python3
-Recommends: xgc2-fs150
+Recommends: xgc2-fs150, xgc2-media-edge (>= 0.7.0-1~focal), gstreamer1.0-tools, gstreamer1.0-plugins-good, gstreamer1.0-plugins-ugly
 Description: XGC2 FS150 MAVLink router service
  FS150-specific MAVLink router configuration and systemd units.
  It uses /usr/bin/mavlink-routerd from xgc2-mavlink-router, listens on
@@ -195,8 +191,7 @@ Installed services (from onboard/autostart):
   xgc2-fs150-mavlink-router.service   (communication, install-only)
   xgc2-fs150-mavros.service           (install-only)
   xgc2-fs150-mocap.service            (install-only)
-  xgc2-fs150-camera.service           (install-only)
-  xgc2-fs150-media-edge.service       (install-only)
+  xgc2-fs150-media-edge.service       (install-only; Media Edge with the camera as its pipeline source)
 
 Installed configuration:
   ${ROUTER_ETC_DIR}/router.conf
@@ -217,7 +212,6 @@ EOF
     "${pkg_root}${autostart_lib}/start-communication" \
     "${pkg_root}${autostart_lib}/start-mavros" \
     "${pkg_root}${autostart_lib}/start-mocap" \
-    "${pkg_root}${autostart_lib}/start-camera" \
     "${pkg_root}${autostart_lib}/start-media-edge"
 
   fakeroot dpkg-deb --build \

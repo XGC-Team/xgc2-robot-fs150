@@ -24,14 +24,16 @@ if [ "$1" = "configure" ] && command -v systemctl >/dev/null 2>&1; then
   systemctl daemon-reload >/dev/null 2>&1 || true
   write_retract_pin
 
-  for old_service in startMavRoute.service fs150-mavlink-router.service mavlink-router.service; do
+  # The camera is a pipeline source of Media Edge now; the camera unit of
+  # earlier packages owned the device and an RTP port of its own.
+  for old_service in startMavRoute.service fs150-mavlink-router.service mavlink-router.service xgc2-fs150-camera.service; do
     if systemd_running; then
       systemctl stop "${old_service}" >/dev/null 2>&1 || true
     fi
     systemctl disable "${old_service}" >/dev/null 2>&1 || true
   done
 
-  # Install units only. Never enable communication, MAVROS, camera, or
+  # Install units only. Never enable communication, MAVROS, mocap, or
   # Media Edge. 0.1.0-20 shipped a rates helper that Wants from the
   # router and started it on upgrade; retract that leftover.
   if systemd_running; then
@@ -41,7 +43,6 @@ if [ "$1" = "configure" ] && command -v systemctl >/dev/null 2>&1; then
   systemctl mask xgc2-fs150-mavlink-rates.service >/dev/null 2>&1 || true
   systemctl disable xgc2-fs150-mavros.service >/dev/null 2>&1 || true
   systemctl disable xgc2-fs150-mocap.service >/dev/null 2>&1 || true
-  systemctl disable xgc2-fs150-camera.service >/dev/null 2>&1 || true
   systemctl disable xgc2-fs150-media-edge.service >/dev/null 2>&1 || true
 fi
 

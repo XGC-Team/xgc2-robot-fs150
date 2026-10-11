@@ -2,7 +2,7 @@
 <package format="2">
   <name>fs150_onboard_autostart</name>
   <version>0.1.0</version>
-  <description>Unified FS150 systemd manager: communication (MAVLink router), camera, and Media Edge. Installs units only. Does not enable or start any unit.</description>
+  <description>Unified FS150 systemd manager: communication (MAVLink router), MAVROS, mocap, and Media Edge with the camera as its pipeline source. Installs units only. Does not enable or start any unit.</description>
   <maintainer email="apt@example.com">XGC2</maintainer>
   <license>Proprietary</license>
   <buildtool_depend>catkin</buildtool_depend>
