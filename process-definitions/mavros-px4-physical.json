@@ -1,0 +1,88 @@
+{
+  "apiVersion": "xgc.execution.process/v1",
+  "definitions": [
+    {
+      "id": "mavros-px4-physical",
+      "version": "1.1.0",
+      "label": "MAVROS for a physical PX4 vehicle",
+      "description": "Direct MAVROS node against a real PX4 flight controller. The endpoint is supplied by the calling graph from the bound Robot asset; nothing about it is derived from a simulator instance. Process readiness means the MAVROS node is available and reconnecting; vehicle connection remains explicit on mavros/state.",
+      "parameters": {
+        "properties": {
+          "fcuUrl": {
+            "type": "string",
+            "description": "MAVLink endpoint of the physical flight controller (udp://, tcp://, or serial://)",
+            "default": "udp://:14550@192.168.51.11:14555"
+          },
+          "gcsUrl": {
+            "type": "string",
+            "description": "Optional MAVLink bridge for a ground station; empty disables the bridge",
+            "default": ""
+          },
+          "mavSystemId": {
+            "type": "integer",
+            "description": "Target MAVLink system ID",
+            "default": 1,
+            "minimum": 1,
+            "maximum": 245
+          },
+          "namespace": {
+            "type": "string",
+            "description": "Relative per-robot ROS namespace",
+            "default": "uav1"
+          },
+          "rosRuntimePrefix": {
+            "type": "string",
+            "description": "Trusted ROS runtime; the execution user's XGC overlay is discovered automatically",
+            "default": "/opt/ros/noetic",
+            "fixedOnly": true,
+            "x-xgc-path-kind": "directory",
+            "enum": [
+              "/opt/ros/noetic"
+            ]
+          },
+          "rosMasterUri": {
+            "type": "string"
+          },
+          "rosIp": {
+            "type": "string",
+            "default": "127.0.0.1"
+          }
+        },
+        "required": [
+          "rosMasterUri"
+        ]
+      },
+      "command": {
+        "executable": "roslaunch",
+        "args": [
+          "--wait",
+          "mavros",
+          "px4.launch",
+          "fcu_url:=${fcuUrl}",
+          "gcs_url:=${gcsUrl}",
+          "tgt_system:=${mavSystemId}",
+          "tgt_component:=1"
+        ],
+        "env": {
+          "ROS_MASTER_URI": "${rosMasterUri}",
+          "ROS_NAMESPACE": "${namespace}",
+          "ROS_IP": "${rosIp}",
+          "ROS_HOSTNAME": ""
+        }
+      },
+      "setupFiles": [
+        "${rosRuntimePrefix}/setup.bash"
+      ],
+      "readiness": {
+        "kind": "none"
+      },
+      "stop": {
+        "graceMs": 8000
+      },
+      "logs": {
+        "maxBytes": 1048576,
+        "files": 3
+      }
+    }
+  ]
+}

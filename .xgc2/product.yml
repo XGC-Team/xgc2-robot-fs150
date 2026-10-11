@@ -85,6 +85,7 @@ ownership:
   - /lib/systemd/system/xgc2-fs150-media-edge.service
   - /usr/share/xgc2/fs150/mavros
   - /usr/share/doc/xgc2-fs150-mavlink-router
+  - /usr/share/xgc2/process-definitions/mavros-px4-physical.json
 release:
   dependency_policy:
     xgc2-mavlink-router: verify

@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+test -f /usr/share/xgc2/process-definitions/mavros-px4-physical.json
+
 dpkg -s xgc2-fs150 >/dev/null
 # The relay is the compiled node of ros-noetic-xgc2-vrpn-relay, not the former Python package.
 dpkg -s ros-noetic-xgc2-vrpn-relay >/dev/null

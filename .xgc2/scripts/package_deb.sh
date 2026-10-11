@@ -69,6 +69,9 @@ build_profile_package() {
     fi
   done
 
+  install -D -m 0644 "${REPO_ROOT}/process-definitions/mavros-px4-physical.json" \
+    "${pkg_root}/usr/share/xgc2/process-definitions/mavros-px4-physical.json"
+
   cat > "${pkg_root}/DEBIAN/control" <<EOF
 Package: ${PROFILE_PACKAGE}
 Version: ${VERSION}
