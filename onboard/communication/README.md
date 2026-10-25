@@ -12,11 +12,11 @@ src/fs150_mavros/launch/mavros.launch
 src/fs150_mocap/launch/mocap.launch      assembly: tracker + vision_pose
 ```
 
-Onboard checker (no MAVROS): `onboard/scripts/check-px4-params.py` against
-router UDP `127.0.0.1:14561`. The expected table is builtin
-(`DEFAULT_EXPECTED`: TELEM1/921600, EKF2 vision, arm without GPS,
-kill/land disarm, 3S). The operator path is the XGC2 User script
-`FS150 · check PX4 params` (full file embedded; no companion copy).
+The canonical checker (no MAVROS) is maintained in tool-scripts under
+`public/robot-commands/FS150/check-px4-params.py`, against router UDP
+`127.0.0.1:14561`. The expected table is builtin (`DEFAULT_EXPECTED`).
+The XGC2 User script calls the published `robot-command.sh FS150 check-px4-params`
+entry; this product does not maintain a second implementation.
 Optional `--expected` JSON overrides the builtin table.
 
 The router binary is APT `xgc2-mavlink-router` (`/usr/bin/mavlink-routerd`).

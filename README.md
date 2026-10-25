@@ -44,26 +44,15 @@ flight-runtime systemd services.  Install `xgc2-fs150-mavlink-router` to
 place the units on disk, then enable them yourself if this aircraft should
 claim `/dev/ttyS7` at boot.
 
-For a one-shot companion bring-up (Aliyun ubuntu-ports + ROS key repair +
-XGC2 apt + quarantine foreign/broken apt lists + install router + stop/mask
-legacy mavlink units + free `/dev/ttyS7` + enable router + HEARTBEAT gate +
-Wi-Fi/static IPv4 **last**, never reconnect), run on the aircraft:
+Robot preparation uses the shared `XGC-Team/xgc2-tool-scripts` installer and
+`fs150-focal-noetic` profile. This product no longer maintains a separate one-shot
+installer or PX4 checker. Its onboard directory owns the product runtime, launch
+files, service units and device configuration.
 
-```bash
-sudo bash onboard/scripts/install-mavlink-router.sh --yes \
-  --lan-address 192.168.51.24
-```
-
-Field SSID/PSK are defaulted. Omit `--lan-address` on a TTY and the script
-prompts only for this aircraft's IPv4. Default gateway/DNS is `192.168.51.1`
-(`/24`; **`/32` is refused** — it is the known “powered on but SSH hangs
-until someone pings” bug). Same-host prefix fixes are applied live without
-`connection up`. `--skip-wifi` leaves addressing alone.
-
-The script **fails** if no FC MAVLink appears on `127.0.0.1:14561` after the
-companion is at **921600** (usual cause: PX4 still on 115200). Fix PX4 via QGC
-wired serial, then re-run or restart the unit. Use `--skip-link-check` only when
-you intentionally install before the FC baud is updated.
+Use the published `onboard-baseline/bootstrap.sh` for third-party environment
+preparation, then `robot-command.sh FS150 install-services` for the router product.
+Service enable/start, network configuration/activation and PX4 parameter operations
+are separate explicit tasks. Preparation does not write FC parameters or reboot it.
 
 Packaged UART baud is **921600** (hard rule). Do not lower it for a quick
 heartbeat. See `docs/mavlink_timesync_rtt.md`. Field RTT/TIMESYNC notes live
@@ -71,13 +60,17 @@ in `xgc2-dev-memory` `memory/now/fs150-uart-921600.md`.
 
 ## Install
 
-Configure both the ROS Noetic APT source and the XGC2 APT source first.  Then:
+After preparing the environment, use the shared explicit product installation entry:
 
 ```bash
-sudo apt update
-sudo apt install xgc2-fs150
-sudo apt install xgc2-fs150-mavlink-router
+set -o pipefail
+curl -fsSL https://xgc2.xiaokang.ink/robot-command.sh | sudo bash -s -- \
+  FS150 install-services --profile fs150-focal-noetic \
+  --apt-url https://xgc2.apt.xiaokang.ink --yes
 ```
+
+This installs the robot assets and router without enabling or starting services. Use the corresponding
+`enable-services` or `start-services` task when selected by the operator.
 
 Smoke test:
 
@@ -86,7 +79,6 @@ test -d /opt/xgc2/robots/fs150/docs
 test -f /opt/xgc2/robots/fs150/docs/rk356x_performance_mode.md
 dpkg -s xgc2-fs150
 dpkg -s xgc2-fs150-mavlink-router
-! systemctl is-enabled xgc2-fs150-mavlink-router.service
 test -f /lib/systemd/system/xgc2-fs150-media-edge.service
 test -f /etc/xgc2/fs150-mavlink-router/router.conf
 ```
