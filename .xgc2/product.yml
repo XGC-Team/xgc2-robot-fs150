@@ -1,7 +1,7 @@
 schema: xgc2.product.v1
 id: xgc2-fs150
 name: XGC2 FS150 Robot
-version: 0.2.0-1
+version: 0.2.0-2
 kind: mixed
 summary: Real FS150 robot onboard profile, documentation, and runtime dependency aggregation.
 groups:
@@ -92,4 +92,4 @@ release:
     xgc2-media-edge: verify
     xgc2-vrpn-relay: verify
   apt_versions:
-    focal: 0.2.0-1
+    focal: 0.2.0-2
