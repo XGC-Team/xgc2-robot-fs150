@@ -1,0 +1,4 @@
+[submodule "onboard/communication/onboard-telemetry"]
+	path = onboard/communication/onboard-telemetry
+	url = git@github.com:XGC-Team/xgc2-onboard-telemetry.git
+	branch = main
