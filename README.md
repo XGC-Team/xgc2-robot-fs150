@@ -64,7 +64,7 @@ After preparing the environment, use the shared explicit product installation en
 
 ```bash
 set -o pipefail
-curl -fsSL https://xgc2.xiaokang.ink/robot-command.sh | sudo bash -s -- \
+curl -fsSL https://xgc2.xiaokang.ink/scripts/robot-command.sh | sudo bash -s -- \
   FS150 install-services --profile fs150-focal-noetic \
   --apt-url https://xgc2.apt.xiaokang.ink --yes
 ```
