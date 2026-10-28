@@ -26,8 +26,8 @@ This tree only owns the FS150 topology:
 - UART `/dev/ttyS7` at `921600` to PX4
 - remote / GCS UDP `0.0.0.0:14560` with `BlockMsgIdOut = 105, 106, 331, 132`
 - loopback UDP `127.0.0.1:14561` unfiltered — onboard MAVROS and local
-  probes. Do not aim ground tools at 14561. Msgid 30/31/32 stay on the
-  air at 15 Hz via flight-controller `extras.txt`.
+  probes. Do not aim ground tools at 14561. Messages 30/31/32 have independently selected source rates in FC `extras.txt`.
+  Remote-only reduction uses that router output's `MessageRatesOut` (router >= 3.0.0-14), preserving local source rates.
 
 Onboard MAVROS is `fs150_mavros`. It only passes arguments to official
 `mavros/px4.launch` and talks to the local router port:
@@ -58,3 +58,10 @@ Install `xgc2-fs150-mavlink-router` to install the communication,
 MAVROS, and mocap units owned by `onboard/autostart`. The package does
 not enable or start them. The aggregator package `xgc2-fs150` also does
 not start them.
+
+Onboard MAVROS has no GCS forwarding argument. Its included MAVROS launch
+receives an explicit empty `gcs_url`; QGC connects through the existing router
+TCP 5760 entry. Do not add a broadcast URL or a second forwarding process.
+The user reported a historical broadcast storm from such a MAVROS broadcast
+configuration. Check this boundary with `python3 tests/check_onboard_mavros_topology.py`
+from the product root.

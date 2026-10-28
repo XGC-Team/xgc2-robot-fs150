@@ -21,7 +21,9 @@ jobs:
         with:
           fetch-depth: 2
       - name: Check native camera ownership
-        run: python3 tests/check_camera_rules.py
+        run: |
+          python3 tests/check_camera_rules.py
+          python3 tests/check_onboard_mavros_topology.py
   build-debs:
     runs-on: ubuntu-latest
     steps:
