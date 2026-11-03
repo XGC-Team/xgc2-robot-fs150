@@ -51,8 +51,6 @@ jobs:
           assert not Path("onboard/communication/src/fs150_mocap").exists()
           assert not Path("onboard/autostart/src/fs150_onboard_autostart/scripts/start-mocap").exists()
           PY
-          ! grep -q 'Depends:.*ros-noetic-xgc2-vrpn-relay' .xgc2/scripts/package_deb.sh
-          ! grep -q '^  - ros-noetic-xgc2-vrpn-relay' .xgc2/product.yml
 
 
       - name: Build and install-check deb package

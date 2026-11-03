@@ -26,3 +26,13 @@ with tempfile.TemporaryDirectory() as directory:
     assert 'MAV_SYS_ID' not in settings and 'MOCAP_RIGID_BODY' not in settings
     assert 'UART_DEVICE=/dev/ttyS7' in settings
 print('PASS router installation preserves services and has no aircraft identity settings')
+
+# Check the entire declared runtime dependency set. This catches obsolete extras
+# without making a negative grep look like a package installation to release audit.
+package_script = (ROOT / '.xgc2/scripts/package_deb.sh').read_text()
+profile_dependencies = next(line.partition(':')[2].strip() for line in package_script.splitlines() if line.startswith('Depends:'))
+actual = {part.strip().split()[0] for part in profile_dependencies.split(',')}
+expected = {'chrony', 'python3', 'ros-noetic-ros-base', 'ros-noetic-mavros',
+            'ros-noetic-mavros-extras', 'ros-noetic-vrpn-client-ros', 'xgc2-mavlink-router'}
+assert actual == expected, (actual, expected)
+print('PASS exact FS150 runtime dependency set')
