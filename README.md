@@ -107,7 +107,7 @@ The FS150 service package installs this static router topology:
 - UART `/dev/ttyS7` at `921600` baud for the PX4 flight controller.
 - Remote MAVROS UDP server on `0.0.0.0:14560` with `BlockMsgIdOut = 105, 106, 331, 132`.
 - Local MAVROS UDP server on `127.0.0.1:14561` without message filtering.
-  Onboard `fs150_mavros` / `xgc2-fs150-mavros.service` connects here
+  Onboard `start-mavros` / `xgc2-fs150-mavros.service` connects here
   (`udp://:14551@127.0.0.1:14561`). Msgid 30/31/32 stay on the air at 15 Hz
   via flight-controller `extras.txt` (`configure linux`), not a rates unit.
 
@@ -143,3 +143,11 @@ This repository does not own:
 
 Proprietary.  This repository is public for integration visibility, but it does
 not grant redistribution or reuse rights beyond the project owner's intent.
+
+Runtime resources are installed together with `xgc2-fs150` and
+`xgc2-fs150-mavlink-router` (0.2.0-4 or later); installation never enables or
+starts services. Select Router, MAVROS, mocap or media separately in the
+service configuration menu. `start-mavros` calls official `mavros/px4.launch`
+directly with GCS forwarding disabled. Before starting, it verifies the actual
+PX4 heartbeat and MAV_SYS_ID through local Router TCP 5760 against the expected
+management-IP identity. An identity mismatch stops startup without changing PX4.

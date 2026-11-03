@@ -1,7 +1,7 @@
 schema: xgc2.product.v1
 id: xgc2-fs150
 name: XGC2 FS150 Robot
-version: 0.2.0-3
+version: 0.2.0-4
 kind: mixed
 summary: Real FS150 robot onboard profile, documentation, and runtime dependency aggregation.
 groups:
@@ -10,6 +10,7 @@ groups:
 apt:
   distribution: focal
   install:
+  - xgc2-fs150
   - xgc2-fs150-mavlink-router
   packages:
   - xgc2-fs150
@@ -31,7 +32,7 @@ apt:
 usage:
   install: 'sudo apt update
 
-    sudo apt install xgc2-fs150-mavlink-router
+    sudo apt install xgc2-fs150 xgc2-fs150-mavlink-router
 
     '
   smoke_test: |
@@ -52,10 +53,14 @@ ownership:
   - /lib/systemd/system/xgc2-fs150-mavlink-router.service
   - /usr/share/doc/xgc2-fs150-mavlink-router
   - /usr/share/xgc2/process-definitions/mavros-px4-physical.json
+  - /lib/systemd/system/xgc2-fs150-mavros.service
+  - /lib/systemd/system/xgc2-fs150-mocap.service
+  - /lib/systemd/system/xgc2-fs150-media-edge.service
+  - /usr/share/xgc2/fs150/mocap
 release:
   dependency_policy:
     xgc2-mavlink-router: verify
     xgc2-media-edge: verify
     xgc2-vrpn-relay: verify
   apt_versions:
-    focal: 0.2.0-3
+    focal: 0.2.0-4

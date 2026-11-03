@@ -7,6 +7,7 @@ catkin_package()
 install(PROGRAMS
   scripts/wait-device
   scripts/start-communication
+  scripts/read-fcu-identity
   scripts/start-mavros
   scripts/start-mocap
   scripts/start-media-edge

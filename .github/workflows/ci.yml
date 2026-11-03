@@ -25,6 +25,7 @@ jobs:
           python3 tests/check_camera_rules.py
           python3 tests/check_install_contract.py
           python3 tests/check_onboard_mavros_topology.py
+          python3 -m unittest discover -s tests -p test_mavros_identity.py -v
   build-debs:
     runs-on: ubuntu-latest
     steps:
@@ -51,7 +52,6 @@ jobs:
           import xml.etree.ElementTree as ET
           root = Path("onboard/communication/src")
           for launch in (
-              root / "fs150_mavros/launch/mavros.launch",
               root / "fs150_mocap/launch/mocap.launch",
           ):
               ET.parse(launch)

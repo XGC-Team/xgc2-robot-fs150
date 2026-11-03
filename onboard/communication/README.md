@@ -8,7 +8,6 @@ Sibling of `onboard/sensors` and `onboard/autostart`. There is no
 ```text
 mavlink-router/router.conf
 expected-px4-params.json                 snapshot of DEFAULT_EXPECTED (not packaged)
-src/fs150_mavros/launch/mavros.launch
 src/fs150_mocap/launch/mocap.launch      assembly: tracker + vision_pose
 ```
 
@@ -29,19 +28,15 @@ This tree only owns the FS150 topology:
   probes. Do not aim ground tools at 14561. Messages 30/31/32 have independently selected source rates in FC `extras.txt`.
   Remote-only reduction uses that router output's `MessageRatesOut` (router >= 3.0.0-14), preserving local source rates.
 
-Onboard MAVROS is `fs150_mavros`. It only passes arguments to official
-`mavros/px4.launch` and talks to the local router port:
+Onboard MAVROS is started by `start-mavros`, which calls the official
+`mavros/px4.launch` directly. There is no FS150 forwarding launch.
+It loads ROS, reads the actual FC heartbeat and MAV_SYS_ID via the local Router,
+and compares it with the management-IP expectation before starting MAVROS.
+The local URL is `udp://:14551@127.0.0.1:14561`; `gcs_url` is empty so Router
+alone owns ground-station forwarding. Installation provides files only;
+manual start and boot enable are separate choices.
 
-```text
-udp://:14551@127.0.0.1:14561
-```
-
-`14560` stays the filtered remote/GCS MAVROS endpoint. Do not point the
-onboard wrapper at `14560`.
-
-```bash
-roslaunch fs150_mavros mavros.launch
-# or
+```sh
 sudo systemctl start xgc2-fs150-mavros.service
 ```
 

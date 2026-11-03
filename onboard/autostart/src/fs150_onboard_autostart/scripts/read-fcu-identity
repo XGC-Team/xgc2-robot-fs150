@@ -1,0 +1,93 @@
+#!/usr/bin/env python3
+"""Read-only PX4 identity handshake on the local Router, once before MAVROS."""
+import argparse
+import socket
+import struct
+import sys
+import time
+
+EXTRA = {0: 50, 20: 214, 22: 220}
+
+
+def crc(data):
+    value = 0xffff
+    for byte in data:
+        tmp = byte ^ (value & 0xff)
+        tmp ^= (tmp << 4) & 0xff
+        value = (value >> 8) ^ (tmp << 8) ^ (tmp << 3) ^ (tmp >> 4)
+    return value
+
+
+def frame(identity, payload, seq):
+    header = bytes([len(payload), seq % 256, 255, 193, identity])
+    return b'\xfe' + header + payload + struct.pack('<H', crc(header + payload + bytes([EXTRA[identity]])))
+
+
+def split_frames(data):
+    result = []
+    while data:
+        if data[0] == 254 and len(data) >= 8:
+            head = 6; length = data[1]; end = head + length
+            identity, system, component = data[5], data[3], data[4]
+            size = end + 2
+        elif data[0] == 253 and len(data) >= 12:
+            head = 10; length = data[1]; end = head + length
+            identity = int.from_bytes(data[7:10], 'little')
+            system, component = data[5], data[6]
+            size = end + 2 + (13 if data[2] & 1 else 0)
+        else:
+            if data[0] in (253, 254): break
+            data = data[1:]; continue
+        if len(data) < size: break
+        if identity in EXTRA and crc(data[1:end] + bytes([EXTRA[identity]])) == int.from_bytes(data[end:end+2], 'little'):
+            result.append((identity, system, component, data[head:end]))
+        data = data[size:]
+    return result, data
+
+
+def messages(data):
+    return iter(split_frames(data)[0])
+
+
+def read_identity(endpoint=('127.0.0.1', 5760), timeout=8):
+    sock = socket.create_connection(endpoint, timeout=timeout)
+    sock.settimeout(.3)
+    buffer = b''
+    deadline = time.monotonic() + timeout; next_send = 0; seq = 0; target = None
+    try:
+        while time.monotonic() < deadline:
+            now = time.monotonic()
+            if now >= next_send:
+                sock.sendall(frame(0, struct.pack('<IBBBBB',0,6,8,0,4,3),seq)); seq += 1
+                if target is not None:
+                    sock.sendall(frame(20,struct.pack('<hBB16s',-1,target,1,b'MAV_SYS_ID'),seq)); seq += 1
+                next_send = now + .4
+            try: data = sock.recv(65535)
+            except socket.timeout: continue
+            if not data: raise RuntimeError('Local Router closed identity connection')
+            frames, buffer = split_frames(buffer + data)
+            for identity, system, component, payload in frames:
+                if identity == 0 and component == 1 and len(payload) >= 9 and payload[5] == 12:
+                    if target is not None and target != system: raise RuntimeError('Multiple PX4 systems on local Router')
+                    target = system; next_send = 0
+                if identity == 22 and system == target and component == 1 and len(payload) >= 25 and payload[8:24].rstrip(b'\0') == b'MAV_SYS_ID':
+                    actual = struct.unpack('<i' if payload[24] == 6 else '<f',payload[:4])[0]
+                    if int(actual) != actual or not 1 <= actual <= 255 or actual != target:
+                        raise RuntimeError('Heartbeat and MAV_SYS_ID disagree')
+                    return int(actual)
+        raise RuntimeError('No verified PX4 MAV_SYS_ID received from local Router within %.0fs' % timeout)
+    finally: sock.close()
+
+
+def main():
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--expected',type=int);a=p.parse_args()
+    actual=read_identity()
+    if a.expected is not None and actual != a.expected:
+        raise RuntimeError('FC MAV_SYS_ID=%s, expected from management IP=%s; refusing MAVROS startup' % (actual,a.expected))
+    print(actual)
+
+
+if __name__=='__main__':
+    try: main()
+    except (RuntimeError,OSError) as error:
+        print(str(error),file=sys.stderr);sys.exit(1)

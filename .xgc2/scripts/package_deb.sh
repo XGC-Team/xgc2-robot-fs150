@@ -69,8 +69,36 @@ build_profile_package() {
     fi
   done
 
+  find "${target_root}" -type d -name __pycache__ -prune -exec rm -rf {} +
+
   install -D -m 0644 "${REPO_ROOT}/process-definitions/mavros-px4-physical.json" \
     "${pkg_root}/usr/share/xgc2/process-definitions/mavros-px4-physical.json"
+
+  # Runtime resources belong to the full profile; installation never starts them.
+  local autostart_src="${REPO_ROOT}/onboard/autostart/src/fs150_onboard_autostart"
+  for service in mavros mocap media-edge; do
+    install -Dm0755 "${autostart_src}/scripts/start-${service}" "${pkg_root}/usr/lib/xgc2/fs150/autostart/start-${service}"
+    install -Dm0644 "${autostart_src}/systemd/xgc2-fs150-${service}.service" "${pkg_root}/lib/systemd/system/xgc2-fs150-${service}.service"
+  done
+  install -Dm0755 "${autostart_src}/scripts/read-fcu-identity" "${pkg_root}/usr/lib/xgc2/fs150/autostart/read-fcu-identity"
+  install -Dm0644 "${REPO_ROOT}/onboard/communication/src/fs150_mocap/launch/mocap.launch" "${pkg_root}/usr/share/xgc2/fs150/mocap/launch/mocap.launch"
+  cat > "${pkg_root}/DEBIAN/postinst" <<'POSTINST'
+#!/bin/sh
+set -e
+if [ "$1" = configure ] && command -v systemctl >/dev/null 2>&1; then
+  systemctl daemon-reload >/dev/null 2>&1 || true
+fi
+POSTINST
+  cat > "${pkg_root}/DEBIAN/prerm" <<'PRERM'
+#!/bin/sh
+set -e
+if [ "$1" = remove ] && command -v systemctl >/dev/null 2>&1; then
+  for service in mavros mocap media-edge; do
+    systemctl stop "xgc2-fs150-${service}.service" >/dev/null 2>&1 || true
+    systemctl disable "xgc2-fs150-${service}.service" >/dev/null 2>&1 || true
+  done
+fi
+PRERM
 
   cat > "${pkg_root}/DEBIAN/control" <<EOF
 Package: ${PROFILE_PACKAGE}
@@ -81,6 +109,8 @@ Architecture: all
 Maintainer: XGC2 <apt@example.com>
 Depends: chrony, python3, ros-noetic-ros-base, ros-noetic-mavros, ros-noetic-mavros-extras, ros-noetic-vrpn-client-ros, ros-noetic-xgc2-vrpn-relay (>= 0.2.0-1), xgc2-mavlink-router (>= 3.0.0-7+focal)
 Recommends: htop, i2c-tools, iproute2, net-tools, python3-pip, socat, tmux, usbutils
+Breaks: xgc2-fs150-mavlink-router (<< 0.2.0-3)
+Replaces: xgc2-fs150-mavlink-router (<< 0.2.0-3)
 Description: XGC2 FS150 real-vehicle profile
  Real FS150 robot/onboard aggregation package for XGC2.
  It installs FS150 vehicle resources under /opt/xgc2/robots/fs150 and pulls
@@ -102,7 +132,8 @@ EOF
   find "${pkg_root}" -type d -exec chmod 0755 {} +
   find "${pkg_root}" -type f -exec chmod 0644 {} +
   find "${pkg_root}${INSTALL_PREFIX}/onboard/autostart" -type f \( -name 'start-*' -o -name 'wait-device' \) -exec chmod 0755 {} +
-  chmod 0755 "${pkg_root}/DEBIAN"
+  chmod 0755 "${pkg_root}/DEBIAN" "${pkg_root}/DEBIAN/postinst" "${pkg_root}/DEBIAN/prerm"
+  find "${pkg_root}/usr/lib/xgc2/fs150/autostart" -type f -exec chmod 0755 {} +
 
   fakeroot dpkg-deb --build \
     "${pkg_root}" \
