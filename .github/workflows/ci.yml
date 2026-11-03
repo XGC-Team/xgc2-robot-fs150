@@ -45,27 +45,14 @@ jobs:
           bash -n onboard/autostart/src/fs150_onboard_autostart/scripts/wait-device
           bash -n onboard/autostart/src/fs150_onboard_autostart/scripts/start-communication
           bash -n onboard/autostart/src/fs150_onboard_autostart/scripts/start-mavros
-          bash -n onboard/autostart/src/fs150_onboard_autostart/scripts/start-mocap
           bash -n onboard/autostart/src/fs150_onboard_autostart/scripts/start-media-edge
           python3 - <<'PY'
           from pathlib import Path
-          import xml.etree.ElementTree as ET
-          root = Path("onboard/communication/src")
-          for launch in (
-              root / "fs150_mocap/launch/mocap.launch",
-          ):
-              ET.parse(launch)
-              print("parsed", launch)
-          mocap = (root / "fs150_mocap/launch/mocap.launch").read_text()
-          assert "xgc2_vrpn_relay" in mocap
-          assert "FS150_01" in mocap
-          assert '<arg name="jump_reacquire_s" value="0.0" />' in mocap
-          assert not (root / "fs150_mocap/scripts/vrpn_relay").exists()
-          assert not (root / "fs150_mocap/launch/vrpn.launch").exists()
-          print("fs150 mocap is assembly-only")
+          assert not Path("onboard/communication/src/fs150_mocap").exists()
+          assert not Path("onboard/autostart/src/fs150_onboard_autostart/scripts/start-mocap").exists()
           PY
-          grep -q 'ros-noetic-xgc2-vrpn-relay (>= 0.2.0-1)' .xgc2/scripts/package_deb.sh
-          grep -q 'ros-noetic-xgc2-vrpn-relay (>= 0.2.0-1)' .xgc2/product.yml
+          ! grep -q 'Depends:.*ros-noetic-xgc2-vrpn-relay' .xgc2/scripts/package_deb.sh
+          ! grep -q '^  - ros-noetic-xgc2-vrpn-relay' .xgc2/product.yml
 
 
       - name: Build and install-check deb package

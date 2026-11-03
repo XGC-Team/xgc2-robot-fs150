@@ -8,7 +8,6 @@ Sibling of `onboard/sensors` and `onboard/autostart`. There is no
 ```text
 mavlink-router/router.conf
 expected-px4-params.json                 snapshot of DEFAULT_EXPECTED (not packaged)
-src/fs150_mocap/launch/mocap.launch      assembly: tracker + vision_pose
 ```
 
 The canonical checker (no MAVROS) is maintained in tool-scripts under
@@ -40,19 +39,15 @@ manual start and boot enable are separate choices.
 sudo systemctl start xgc2-fs150-mavros.service
 ```
 
-Each aircraft also runs its own VRPN client against **one** Motive
-tracker (`FS150_01` by default). `fs150_mocap` only names that tracker
-and turns vision_pose on. The client, quality gate, and 30 Hz drop
-policy live in APT `ros-noetic-xgc2-vrpn-relay` (`xgc2_vrpn_relay`, a C++ node).
+The official `vrpn_client_ros` package is installed for Core/Agent to start
+against the selected rigid body. The PX4 robot adapter owns world-frame
+projection and publishes vision_pose. FS150 does not install or start an
+independent `xgc2_vrpn_relay` process.
 
-```bash
-sudo systemctl start xgc2-fs150-mocap.service
-```
-
-Install `xgc2-fs150-mavlink-router` to install the communication,
-MAVROS, and mocap units owned by `onboard/autostart`. The package does
-not enable or start them. The aggregator package `xgc2-fs150` also does
-not start them.
+The full `xgc2-fs150` package installs runtime resources; the separate
+`xgc2-fs150-mavlink-router` package owns only Router configuration and its unit.
+Neither package enables or starts flight-runtime services. Core/Agent owns
+MAVROS and VRPN execution; the MAVROS unit is only a manual diagnostic helper.
 
 Onboard MAVROS has no GCS forwarding argument. Its included MAVROS launch
 receives an explicit empty `gcs_url`; QGC connects through the existing router

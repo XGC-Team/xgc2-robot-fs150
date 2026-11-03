@@ -9,7 +9,6 @@ install(PROGRAMS
   scripts/start-communication
   scripts/read-fcu-identity
   scripts/start-mavros
-  scripts/start-mocap
   scripts/start-media-edge
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )

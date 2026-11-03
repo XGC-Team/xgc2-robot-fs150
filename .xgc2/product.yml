@@ -1,7 +1,7 @@
 schema: xgc2.product.v1
 id: xgc2-fs150
 name: XGC2 FS150 Robot
-version: 0.2.0-4
+version: 0.2.0-5
 kind: mixed
 summary: Real FS150 robot onboard profile, documentation, and runtime dependency aggregation.
 groups:
@@ -22,7 +22,6 @@ apt:
   - ros-noetic-mavros
   - ros-noetic-mavros-extras
   - ros-noetic-vrpn-client-ros
-  - ros-noetic-xgc2-vrpn-relay (>= 0.2.0-1)
   - xgc2-mavlink-router (>= 3.0.0-7+focal)
   recommends:
   - xgc2-media-edge (>= 0.7.0-1~focal)
@@ -54,13 +53,10 @@ ownership:
   - /usr/share/doc/xgc2-fs150-mavlink-router
   - /usr/share/xgc2/process-definitions/mavros-px4-physical.json
   - /lib/systemd/system/xgc2-fs150-mavros.service
-  - /lib/systemd/system/xgc2-fs150-mocap.service
   - /lib/systemd/system/xgc2-fs150-media-edge.service
-  - /usr/share/xgc2/fs150/mocap
 release:
   dependency_policy:
     xgc2-mavlink-router: verify
     xgc2-media-edge: verify
-    xgc2-vrpn-relay: verify
   apt_versions:
-    focal: 0.2.0-4
+    focal: 0.2.0-5

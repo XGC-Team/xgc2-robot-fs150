@@ -151,3 +151,7 @@ service configuration menu. `start-mavros` calls official `mavros/px4.launch`
 directly with GCS forwarding disabled. Before starting, it verifies the actual
 PX4 heartbeat and MAV_SYS_ID through local Router TCP 5760 against the expected
 management-IP identity. An identity mismatch stops startup without changing PX4.
+
+The Core/Agent adapter path uses `vrpn_client_ros` directly and does not depend
+on the independent `xgc2-vrpn-relay` product. FS150 0.2.0-5 stops pulling that
+legacy relay package; do not run a standalone relay beside the adapter.

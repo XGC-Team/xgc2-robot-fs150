@@ -76,12 +76,11 @@ build_profile_package() {
 
   # Runtime resources belong to the full profile; installation never starts them.
   local autostart_src="${REPO_ROOT}/onboard/autostart/src/fs150_onboard_autostart"
-  for service in mavros mocap media-edge; do
+  for service in mavros media-edge; do
     install -Dm0755 "${autostart_src}/scripts/start-${service}" "${pkg_root}/usr/lib/xgc2/fs150/autostart/start-${service}"
     install -Dm0644 "${autostart_src}/systemd/xgc2-fs150-${service}.service" "${pkg_root}/lib/systemd/system/xgc2-fs150-${service}.service"
   done
   install -Dm0755 "${autostart_src}/scripts/read-fcu-identity" "${pkg_root}/usr/lib/xgc2/fs150/autostart/read-fcu-identity"
-  install -Dm0644 "${REPO_ROOT}/onboard/communication/src/fs150_mocap/launch/mocap.launch" "${pkg_root}/usr/share/xgc2/fs150/mocap/launch/mocap.launch"
   cat > "${pkg_root}/DEBIAN/postinst" <<'POSTINST'
 #!/bin/sh
 set -e
@@ -107,14 +106,14 @@ Section: metapackages
 Priority: optional
 Architecture: all
 Maintainer: XGC2 <apt@example.com>
-Depends: chrony, python3, ros-noetic-ros-base, ros-noetic-mavros, ros-noetic-mavros-extras, ros-noetic-vrpn-client-ros, ros-noetic-xgc2-vrpn-relay (>= 0.2.0-1), xgc2-mavlink-router (>= 3.0.0-7+focal)
+Depends: chrony, python3, ros-noetic-ros-base, ros-noetic-mavros, ros-noetic-mavros-extras, ros-noetic-vrpn-client-ros, xgc2-mavlink-router (>= 3.0.0-7+focal)
 Recommends: htop, i2c-tools, iproute2, net-tools, python3-pip, socat, tmux, usbutils
 Breaks: xgc2-fs150-mavlink-router (<< 0.2.0-3)
 Replaces: xgc2-fs150-mavlink-router (<< 0.2.0-3)
 Description: XGC2 FS150 real-vehicle profile
  Real FS150 robot/onboard aggregation package for XGC2.
  It installs FS150 vehicle resources under /opt/xgc2/robots/fs150 and pulls
- the ROS Noetic, MAVROS, VRPN client and relay, and MAVLink router
+ the ROS Noetic, MAVROS, VRPN client, and MAVLink router
  dependencies expected on the FS150 onboard computer. It does not pull Linux host-utils.
 EOF
 
