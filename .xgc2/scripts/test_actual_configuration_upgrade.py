@@ -50,8 +50,11 @@ def main(old, new):
             for p,value in expected.items(): p.write_bytes(value)
             override = Path('/etc/xgc2/fs150-mavlink-router/config.d/local.conf')
             override.write_text('# isolated override\n')
+            before_upgrade = len(log.read_text().splitlines()) if log.exists() else 0
             run('dpkg', '--force-confold', '--install', new)
             run('dpkg', '--force-confold', '--install', new)
+            upgrade_calls = log.read_text().splitlines()[before_upgrade:]
+            assert all(line.split()[0] == 'daemon-reload' for line in upgrade_calls), upgrade_calls
             for p,value in expected.items(): assert p.read_bytes() == value, p
             assert override.read_text() == '# isolated override\n'
             recorded = run('dpkg-query', '-W', '-f=${Conffiles}', PACKAGE)

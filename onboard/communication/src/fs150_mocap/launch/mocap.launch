@@ -2,7 +2,7 @@
   <!-- Assembly only. The VRPN client and the vrpn_relay node (C++) live in xgc2_vrpn_relay. -->
   <arg name="server" default="127.0.0.1" />
   <arg name="port" default="3883" />
-  <arg name="tracker" default="FS150_01" />
+  <arg name="tracker" />
   <arg name="vision_out" default="/mavros/vision_pose/pose" />
   <arg name="vision_target_hz" default="30.0" />
 

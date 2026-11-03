@@ -22,10 +22,10 @@ platform and should follow the aircraft across deployments.
 - Release branch: `main`
 - Package type: mixed Debian profile package
 - Published package:
-  - `xgc2-fs150`
+  - `xgc2-fs150` (optional resource snapshot)
   - `xgc2-fs150-mavlink-router`
 
-The `xgc2-fs150` package is a real-vehicle aggregation package.  It installs the FS150
+The optional `xgc2-fs150` package is a resource and dependency aggregation package; it is not required by the field installer.  It installs the FS150
 resources under `/opt/xgc2/robots/fs150` and depends on the ROS Noetic,
 MAVROS, VRPN, and MAVLink router packages expected on the onboard computer.
 It does not depend on XGC2 Linux host-utils.
@@ -33,7 +33,7 @@ It does not depend on XGC2 Linux host-utils.
 The `xgc2-fs150-mavlink-router` package is the opt-in flight-runtime router
 unit.  It depends on the XGC2-published `xgc2-mavlink-router` binary
 package and installs `/etc/xgc2/fs150-mavlink-router/router.conf` plus the
-systemd units.  It does not enable or start any unit.
+systemd units.  It does not enable, disable, stop, or start any unit on installation or upgrade.
 
 `pymavlink` is useful for low-level MAVLink debugging, but it is not available
 as a standard Ubuntu Focal/ROS Noetic APT package in the checked repositories.

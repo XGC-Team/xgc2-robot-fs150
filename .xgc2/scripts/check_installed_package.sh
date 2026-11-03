@@ -39,7 +39,7 @@ test -f /opt/xgc2/robots/fs150/onboard/communication/src/fs150_mocap/launch/moca
 test ! -e /opt/xgc2/robots/fs150/onboard/communication/src/fs150_mocap/scripts/vrpn_relay
 test ! -e /opt/xgc2/robots/fs150/onboard/communication/src/fs150_mocap/launch/vrpn.launch
 grep -q 'xgc2_vrpn_relay' /opt/xgc2/robots/fs150/onboard/communication/src/fs150_mocap/launch/mocap.launch
-grep -q 'FS150_01' /opt/xgc2/robots/fs150/onboard/communication/src/fs150_mocap/launch/mocap.launch
+grep -q '<arg name="tracker" />' /opt/xgc2/robots/fs150/onboard/communication/src/fs150_mocap/launch/mocap.launch
 test -x /opt/xgc2/robots/fs150/onboard/autostart/src/fs150_onboard_autostart/scripts/start-communication
 test ! -e /opt/xgc2/robots/fs150/onboard/autostart/src/fs150_onboard_autostart/scripts/set-mavlink-rates
 test -x /opt/xgc2/robots/fs150/onboard/autostart/src/fs150_onboard_autostart/scripts/start-mavros
@@ -75,15 +75,15 @@ test ! -e /usr/share/xgc2/fs150/mocap/vrpn_relay
 test ! -e /usr/share/xgc2/fs150/mocap/launch/vrpn.launch
 grep -q '127.0.0.1:14561' /usr/share/xgc2/fs150/mavros/launch/mavros.launch
 grep -q 'xgc2_vrpn_relay' /usr/share/xgc2/fs150/mocap/launch/mocap.launch
-grep -q 'FS150_01' /usr/share/xgc2/fs150/mocap/launch/mocap.launch
+grep -q '<arg name="tracker" />' /usr/share/xgc2/fs150/mocap/launch/mocap.launch
 # The installed launch file composes with the installed relay package.
 set +u
 # shellcheck disable=SC1091
 source /opt/ros/noetic/setup.bash
 set -u
-roslaunch --files /usr/share/xgc2/fs150/mocap/launch/mocap.launch >/dev/null
+roslaunch --files /usr/share/xgc2/fs150/mocap/launch/mocap.launch tracker:=test-aircraft >/dev/null
 # The aircraft keeps a jump rejected; re-acquiring a track is an FS150 owner decision.
-fs150_params="$(roslaunch --dump-params /usr/share/xgc2/fs150/mocap/launch/mocap.launch)"
+fs150_params="$(roslaunch --dump-params /usr/share/xgc2/fs150/mocap/launch/mocap.launch tracker:=test-aircraft)"
 grep -Eq '^/vrpn_relay/jump_reacquire_s: 0(\.0)?$' <<<"${fs150_params}"
 grep -q '^Device = /dev/ttyS7$' /etc/xgc2/fs150-mavlink-router/router.conf
 grep -q '^Baud = 921600$' /etc/xgc2/fs150-mavlink-router/router.conf
