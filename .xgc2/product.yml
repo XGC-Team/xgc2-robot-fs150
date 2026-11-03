@@ -10,7 +10,6 @@ groups:
 apt:
   distribution: focal
   install:
-  - xgc2-fs150
   - xgc2-fs150-mavlink-router
   packages:
   - xgc2-fs150
@@ -32,42 +31,14 @@ apt:
 usage:
   install: 'sudo apt update
 
-    sudo apt install xgc2-fs150
-
     sudo apt install xgc2-fs150-mavlink-router
 
     '
-  smoke_test: 'test -d /opt/xgc2/robots/fs150/docs
-
-    test -f /opt/xgc2/robots/fs150/docs/rk356x_performance_mode.md
-
-    dpkg -s xgc2-fs150
-
+  smoke_test: |
     dpkg -s xgc2-fs150-mavlink-router
-
-    dpkg -s ros-noetic-xgc2-vrpn-relay
-
     test -f /etc/xgc2/fs150-mavlink-router/router.conf
-
-    test -f /etc/apt/preferences.d/xgc2-fs150-retract-20
-
-    test ! -e /lib/systemd/system/xgc2-fs150-camera.service
-
-    test -f /lib/systemd/system/xgc2-fs150-media-edge.service
-
-    test ! -e /lib/systemd/system/xgc2-fs150-mavlink-rates.service
-
-    ! grep -q xgc2-fs150-mavlink-rates /lib/systemd/system/xgc2-fs150-mavlink-router.service
-
-    test -f /lib/systemd/system/xgc2-fs150-mavros.service
-
-    ! systemctl is-enabled xgc2-fs150-mavlink-router.service
-
-    ! systemctl is-enabled xgc2-fs150-mavros.service
-
-    ! systemctl is-enabled xgc2-fs150-mocap.service
-
-    '
+    test -f /lib/systemd/system/xgc2-fs150-mavlink-router.service
+    ! dpkg -L xgc2-fs150-mavlink-router | grep -E 'mavros|mocap|media-edge|/opt/xgc2/robots'
   notes: The ROS Noetic and XGC2 APT sources must be configured before installing
     this package.
 ownership:
@@ -79,11 +50,6 @@ ownership:
   - /etc/xgc2/fs150/onboard.env
   - /usr/lib/xgc2/fs150/autostart
   - /lib/systemd/system/xgc2-fs150-mavlink-router.service
-  - /lib/systemd/system/xgc2-fs150-mavros.service
-  - /lib/systemd/system/xgc2-fs150-mocap.service
-  - /usr/share/xgc2/fs150/mocap
-  - /lib/systemd/system/xgc2-fs150-media-edge.service
-  - /usr/share/xgc2/fs150/mavros
   - /usr/share/doc/xgc2-fs150-mavlink-router
   - /usr/share/xgc2/process-definitions/mavros-px4-physical.json
 release:

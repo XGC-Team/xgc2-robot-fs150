@@ -30,10 +30,11 @@ resources under `/opt/xgc2/robots/fs150` and depends on the ROS Noetic,
 MAVROS, VRPN, and MAVLink router packages expected on the onboard computer.
 It does not depend on XGC2 Linux host-utils.
 
-The `xgc2-fs150-mavlink-router` package is the opt-in flight-runtime router
-unit.  It depends on the XGC2-published `xgc2-mavlink-router` binary
-package and installs `/etc/xgc2/fs150-mavlink-router/router.conf` plus the
-systemd units.  It does not enable, disable, stop, or start any unit on installation or upgrade.
+The `xgc2-fs150-mavlink-router` package installs only the Router configuration,
+serial-device wait/start helpers and `xgc2-fs150-mavlink-router.service`.
+It depends on the shared `xgc2-mavlink-router` binary. It ships no MAVROS,
+mocap or media service and needs no aircraft System ID. Installation and upgrade
+do not enable, disable, stop or start any service.
 
 `pymavlink` is useful for low-level MAVLink debugging, but it is not available
 as a standard Ubuntu Focal/ROS Noetic APT package in the checked repositories.

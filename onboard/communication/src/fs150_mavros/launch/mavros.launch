@@ -3,7 +3,7 @@
        UDP server (127.0.0.1:14561, unfiltered). Remote/GCS MAVROS
        uses 0.0.0.0:14560 and is not this launch. -->
   <arg name="fcu_url" default="udp://:14551@127.0.0.1:14561" />
-  <arg name="tgt_system" />
+  <arg name="tgt_system" default="1" />
   <arg name="tgt_component" default="1" />
   <arg name="log_output" default="screen" />
   <arg name="fcu_protocol" default="v2.0" />

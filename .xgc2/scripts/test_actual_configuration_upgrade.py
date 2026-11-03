@@ -36,6 +36,9 @@ def main(old, new):
         if p.exists(): raise SystemExit('Refusing preexisting FS150 configuration')
     with tempfile.TemporaryDirectory(prefix='actual-fs150-upgrade-') as temp:
         root = Path(temp)
+        fresh = root/'new-payload'
+        run('dpkg-deb', '--extract', new, str(fresh))
+        new_factory = {p: (fresh/str(p).lstrip('/')).read_bytes() for p in CONFIGS}
         log = root/'systemctl.log'
         (root/'systemctl').write_text('#!/bin/sh\nprintf "%s\\n" "$*" >>"$FS150_SYSTEMCTL_LOG"\n'
                                     'case "$1" in start|enable|restart|try-restart) exit 97;; esac\nexit 0\n')
@@ -45,9 +48,10 @@ def main(old, new):
         for edited in (False, True):
             run('dpkg', '--force-confold', '--install', old)
             factory = {p: p.read_bytes() for p in CONFIGS}
-            expected = {p: v + b'\n# isolated operator change\n' if edited else v
+            expected = {p: v + b'\n# isolated operator change\n' if edited else new_factory[p]
                         for p,v in factory.items()}
-            for p,value in expected.items(): p.write_bytes(value)
+            if edited:
+                for p,value in expected.items(): p.write_bytes(value)
             override = Path('/etc/xgc2/fs150-mavlink-router/config.d/local.conf')
             override.write_text('# isolated override\n')
             before_upgrade = len(log.read_text().splitlines()) if log.exists() else 0
