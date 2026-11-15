@@ -155,3 +155,8 @@ management-IP identity. An identity mismatch stops startup without changing PX4.
 The Core/Agent adapter path uses `vrpn_client_ros` directly and does not depend
 on the independent `xgc2-vrpn-relay` product. FS150 0.2.0-5 stops pulling that
 legacy relay package; do not run a standalone relay beside the adapter.
+
+## MAVLink Stream Rate Ownership
+
+- **`TIMESYNC` (`msgid=111`) at `10 Hz`**: Configured during companion/onboard startup (`fc_timesync_script` / `apply-fc-extras-rates.py`) as a **persistent vehicle baseline** (`persistentBaseline: true`, `restoredOnStop: false`). It is owned by the vehicle companion runtime across Experiment Runs and is intentionally not reverted when a Run or calibration stops.
+- **`HIGHRES_IMU` (`msgid=105`) temporary `100 Hz` boost**: Requested only inside an active mocap calibration Run (`restoredOnStop: true`). Prior stream interval state is recorded in a durable lease and restored after process/group exit via `xgc2-mocap-rate-recover` (and retried asynchronously if the FCU or link is offline at Stop).
